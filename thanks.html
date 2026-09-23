@@ -50,49 +50,82 @@
   </main>
   <script>
     (function () {
-      var raw = sessionStorage.getItem("order");
-      var order = null;
-      try { order = raw ? JSON.parse(raw) : null; } catch (e) { order = null; }
-
       var title = document.getElementById("thanks-title");
       var lead = document.getElementById("thanks-lead");
       var steps = document.getElementById("thanks-steps");
+      var params = new URLSearchParams(location.search);
+      var sessionId = params.get("session_id");
 
-      if (!order) {
-        title.textContent = "Ако нарачката помина, наскоро се јавуваме.";
-        lead.textContent = "Ако формата не ја испрати, врати се и пробај повторно.";
-        return;
-      }
+      function render(order) {
+        if (!order) {
+          title.textContent = "Ако нарачката помина, наскоро се јавуваме.";
+          lead.textContent = "Ако формата не ја испрати, врати се и пробај повторно.";
+          return;
+        }
+        var who = order.buyer ? ", " + order.buyer : "";
+        title.textContent = "Фала" + who + ". " + (order.paid ? "Уплатата е примена." : "Нарачката е примена.");
+        lead.textContent = order.name + " · " + order.label + ".";
 
-      var who = order.buyer ? ", " + order.buyer : "";
-      title.textContent = "Фала" + who + ". Нарачката е примена.";
-      lead.textContent = order.name + " · " + order.label + ". Те контактираме за потврда и плаќање.";
+        var lines = [];
+        if (order.pay === "door" && order.id === "komplet") {
+          lines.push("Плаќаш при подигнување на пратката.");
+          lines.push("Дигиталната верзија ја праќаме на твојата е-пошта кога ќе ја подигнеш пратката.");
+          lines.push("Печатената книшка ја носиме на адресата од нарачката.");
+        } else if (order.pay === "door") {
+          lines.push("Плаќаш при подигнување на пратката.");
+          lines.push("Печатената книшка ја носиме на адресата од нарачката.");
+        } else if (order.id === "pdf") {
+          lines.push("Плаќањето со картичка е примено.");
+          lines.push("PDF-от го праќаме на е-поштата од нарачката.");
+        } else if (order.id === "komplet") {
+          lines.push("Плаќањето со картичка е примено.");
+          lines.push("PDF-от го праќаме на е-пошта по уплатата.");
+          lines.push("Печатената книшка ја праќаме на адресата.");
+        } else {
+          lines.push("Плаќањето со картичка е примено.");
+          lines.push("Печатената книшка ја праќаме на адресата.");
+        }
+        steps.innerHTML = lines.map(function (line, index) {
+          return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
+        }).join("");
 
-      var lines = [
-        "Ја проверуваме нарачката и ти се јавуваме на телефонот или на е-пошта."
-      ];
-      if (order.id === "pdf" || order.id === "komplet") {
-        lines.push("PDF-от го праќаме на е-поштата откако ќе се договориме за плаќање.");
-      }
-      if (order.id === "print" || order.id === "komplet") {
-        lines.push("За печатената книшка ти ја потврдуваме доставата и адресата.");
-      }
-      steps.innerHTML = lines.map(function (line, index) {
-        return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
-      }).join("");
-
-      if (typeof fbq === "function" && !sessionStorage.getItem("purchaseTracked")) {
-        var params = {
+        if (typeof fbq !== "function" || sessionStorage.getItem("purchaseTracked")) return;
+        var pixel = {
           content_name: "652 комбинации — " + order.name,
           content_ids: [order.id],
           content_type: "product",
           value: order.price,
           currency: "MKD"
         };
-        fbq("track", "Lead", params);
-        fbq("track", "Purchase", params);
+        if (order.paid) fbq("track", "Purchase", pixel);
+        else fbq("track", "Lead", pixel);
         sessionStorage.setItem("purchaseTracked", "1");
       }
+
+      if (!sessionId) {
+        var raw = sessionStorage.getItem("order");
+        var stored = null;
+        try { stored = raw ? JSON.parse(raw) : null; } catch (e) { stored = null; }
+        render(stored);
+        return;
+      }
+
+      title.textContent = "Ја проверуваме уплатата...";
+      fetch("/api/session?session_id=" + encodeURIComponent(sessionId))
+        .then(function (response) { return response.json(); })
+        .then(function (order) {
+          if (!order || !order.paid) {
+            title.textContent = "Уплатата не е потврдена.";
+            lead.textContent = "Ако парите ти се повлечени, јави ни се и ќе ја провериме уплатата.";
+            return;
+          }
+          order.pay = "stripe";
+          render(order);
+        })
+        .catch(function () {
+          title.textContent = "Не можеме да ја провериме уплатата.";
+          lead.textContent = "Ако плаќањето помина во Stripe, нарачката ја имаме. Провери ја е-поштата.";
+        });
     })();
   </script>
 </body>

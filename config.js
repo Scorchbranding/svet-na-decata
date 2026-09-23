@@ -1,10 +1,9 @@
 /**
- * Пред да ја објавиш страницата, пополни ги двете полиња.
+ * pixelId — бројот од Meta Events Manager → Datasets / Pixels
  *
- * pixelId    — бројот од Meta Events Manager → Datasets / Pixels
- * orderEmail — е-пошта каде стигнуваат нарачките
- *              (првата нарачка ја потврдуваш преку линк од FormSubmit)
- * contactPhone — по избор, за копче „Прашање“ (пр. 3897xxxxxxx)
+ * Stripe и нарачките не се тука. Во Vercel стави:
+ * STRIPE_SECRET_KEY — тајниот клуч од Stripe
+ * ORDER_EMAIL — е-пошта каде стигнуваат нарачките
  */
 window.SITE = {
   pixelId: "",

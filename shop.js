@@ -5,21 +5,21 @@
       name: "Само PDF",
       price: 599,
       label: "599 ден.",
-      copy: "PDF се испраќа на е-поштата од нарачката. Нема достава."
+      copy: "Се плаќа само со картичка. PDF стигнува на е-пошта по уплатата."
     },
     print: {
       id: "print",
       name: "Печатена книшка",
       price: 999,
       label: "999 ден.",
-      copy: "Печатената книшка ја праќаме на адреса. Те контактираме за достава."
+      copy: "Печатената книшка ја праќаме на адреса. Можеш да платиш со картичка или на врата."
     },
     komplet: {
       id: "komplet",
       name: "PDF + печатено",
       price: 1299,
       label: "1.299 ден.",
-      copy: "PDF стигнува на е-пошта. Печатената книшка ја праќаме на адресата што ќе ја оставиш."
+      copy: "PDF и печатена книшка. Со картичка PDF-от стигнува по уплатата. На врата, PDF-от стигнува кога ќе ја подигнеш пратката."
     }
   };
 
@@ -72,6 +72,7 @@
     if (addr) addr.required = needsAddress(plan.id);
     var barBtn = document.getElementById("bar-btn");
     if (barBtn) barBtn.setAttribute("data-plan", plan.id);
+    updatePayUI();
     if (fromClick) {
       track("AddToCart", planParams(plan));
       if (!checkoutTracked) {
@@ -79,6 +80,50 @@
         track("InitiateCheckout", planParams(plan));
       }
     }
+  }
+
+  function currentPay() {
+    if (selected === "pdf") return "stripe";
+    var input = document.querySelector('input[name="pay"]:checked');
+    return input ? input.value : "stripe";
+  }
+
+  function updatePayUI() {
+    var plan = PLANS[selected] || PLANS.komplet;
+    var pay = currentPay();
+    var door = document.getElementById("pay-door-option");
+    var note = document.getElementById("pay-note");
+    var submit = document.getElementById("submit-btn");
+    var stripeRadio = document.querySelector('input[name="pay"][value="stripe"]');
+    if (selected === "pdf" && stripeRadio) stripeRadio.checked = true;
+    if (door) {
+      door.classList.toggle("hidden", selected === "pdf");
+      var doorInput = door.querySelector("input");
+      if (doorInput) doorInput.disabled = selected === "pdf";
+    }
+    if (submit) {
+      submit.textContent = pay === "stripe"
+        ? "Плати со картичка · " + plan.label
+        : "Нарачај на врата · " + plan.label;
+    }
+    if (!note) return;
+    if (selected === "pdf") {
+      note.textContent = "Дигиталната верзија се плаќа само со картичка. PDF стигнува на е-пошта по успешна уплата.";
+      return;
+    }
+    if (pay === "door" && selected === "komplet") {
+      note.textContent = "При плаќање на врата, дигиталната верзија се испраќа на твојата е-пошта кога ќе ја подигнеш пратката.";
+      return;
+    }
+    if (pay === "door") {
+      note.textContent = "Плаќаш при подигнување на пратката.";
+      return;
+    }
+    if (selected === "komplet") {
+      note.textContent = "Плаќаш сега со картичка. PDF стигнува на е-пошта по уплатата, а печатената книшка на адреса.";
+      return;
+    }
+    note.textContent = "Плаќаш сега со картичка. Книшката ја праќаме на адресата.";
   }
 
   function showError(message) {
@@ -111,15 +156,10 @@
   if (year) year.textContent = String(new Date().getFullYear());
 
   var banner = document.getElementById("setup-banner");
-  var emailReady = window.SITE && window.SITE.orderEmail && window.SITE.orderEmail.indexOf("@") > 0;
   var pixelReady = window.SITE && /^\d{5,}$/.test(String(window.SITE.pixelId || ""));
-  if (banner && isLocal() && (!emailReady || !pixelReady)) {
+  if (banner && isLocal() && !pixelReady) {
     banner.classList.remove("hidden");
-    banner.innerHTML = "Тест на компјутер: пред објава внеси " +
-      (pixelReady ? "" : "<code>pixelId</code> ") +
-      (!pixelReady && !emailReady ? "и " : "") +
-      (emailReady ? "" : "<code>orderEmail</code> ") +
-      "во <code>config.js</code>. Нарачката локално се симулира ако нема е-пошта.";
+    banner.innerHTML = "Тест на компјутер: Pixel ID се внесува во <code>config.js</code>. Stripe клучот и е-поштата за нарачки се во Vercel.";
   }
 
   track("ViewContent", {
@@ -129,6 +169,16 @@
     value: 1299,
     currency: "MKD"
   });
+
+  document.querySelectorAll('input[name="pay"]').forEach(function (input) {
+    input.addEventListener("change", updatePayUI);
+  });
+
+  if (location.search.indexOf("payment=cancel") !== -1) {
+    showError("Плаќањето е откажано. Можеш да пробаш повторно.");
+    var checkout = document.getElementById("naracka");
+    if (checkout) checkout.scrollIntoView();
+  }
 
   applyPlan("komplet", false);
 
@@ -142,7 +192,7 @@
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     showError("");
-    var honey = form.querySelector('[name="_honey"]');
+    var honey = form.querySelector('[name="company"]');
     if (honey && honey.value) return;
 
     function field(name) {
@@ -167,63 +217,70 @@
       return showError("За печатената книшка ни треба град и адреса.");
     }
 
+    var pay = currentPay();
+    if (plan.id === "pdf" && pay !== "stripe") {
+      return showError("Дигиталната верзија се плаќа само со картичка.");
+    }
+
     var button = document.getElementById("submit-btn");
+    var buttonLabel = button.textContent;
     button.disabled = true;
-    button.textContent = "Се испраќа...";
+    button.textContent = pay === "stripe" ? "Се отвора плаќањето..." : "Се испраќа...";
 
-    var payload = {
-      _subject: "Нова нарачка: 652 комбинации — " + plan.name,
-      _template: "table",
-      _captcha: "false",
-      _replyto: data.email,
-      Пакет: plan.name,
-      Цена: plan.label,
-      Име: data.name,
-      Телефон: data.phone,
-      Епошта: data.email,
-      Град: data.city || "—",
-      Адреса: data.address || "—",
-      Забелешка: data.note || "—"
-    };
-
-    function finish() {
+    function finishDoor() {
       sessionStorage.removeItem("purchaseTracked");
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
         name: plan.name,
         price: plan.price,
         label: plan.label,
-        buyer: data.name.split(" ")[0]
+        buyer: data.name.split(" ")[0],
+        pay: "door"
       }));
       window.location.href = "thanks.html";
     }
 
     function fail(message) {
       button.disabled = false;
-      button.textContent = "Нарачај за " + plan.label;
+      button.textContent = buttonLabel;
       showError(message);
     }
 
-    if (!emailReady) {
-      if (isLocal()) {
-        finish();
-        return;
-      }
-      fail("Нарачките моментално не се примаат. Обиди се повторно подоцна.");
-      return;
-    }
+    var payload = {
+      plan: plan.id,
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      city: data.city,
+      address: data.address,
+      note: data.note,
+      origin: location.origin
+    };
 
-    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(window.SITE.orderEmail), {
+    var endpoint = pay === "stripe" ? "/api/checkout" : "/api/order";
+    fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(payload)
     }).then(function (response) {
-      if (!response.ok) throw new Error("bad status");
-      return response.json();
-    }).then(function () {
-      finish();
-    }).catch(function () {
-      fail("Нарачката не помина. Провери ја врската и пробај уште еднаш.");
+      return response.json().catch(function () { return {}; }).then(function (body) {
+        if (!response.ok) throw new Error(body.error || "Нарачката не помина.");
+        return body;
+      });
+    }).then(function (body) {
+      if (pay === "stripe") {
+        if (!body.url) throw new Error("Не добивме линк за плаќање.");
+        track("InitiateCheckout", planParams(plan));
+        window.location.href = body.url;
+        return;
+      }
+      finishDoor();
+    }).catch(function (error) {
+      if (isLocal() && pay === "door") {
+        finishDoor();
+        return;
+      }
+      fail(error.message || "Нарачката не помина. Пробај повторно.");
     });
   });
 })();

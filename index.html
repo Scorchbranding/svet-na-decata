@@ -201,13 +201,13 @@
           <button class="plan" type="button" data-plan="pdf">
             <div class="name">Само дигитална</div>
             <div class="sum">599<small>ден.</small></div>
-            <p>PDF на е-пошта. За веднаш, на телефон.</p>
+            <p>PDF на е-пошта. Се плаќа само со картичка.</p>
             <ul>
               <li>Целата книшка во PDF</li>
-              <li>Стигнува на е-поштата од нарачката</li>
+              <li>Стигнува на е-пошта по уплатата</li>
               <li>Без достава и без чекање</li>
             </ul>
-            <div class="choose">Ја сакам на е-пошта</div>
+            <div class="choose">Плати со картичка</div>
           </button>
           <button class="plan" type="button" data-plan="print">
             <div class="name">Само печатена</div>
@@ -216,7 +216,7 @@
             <ul>
               <li>Печатено издание</li>
               <li>Ја листаш додека готвиш</li>
-              <li>Достава по потврда на нарачката</li>
+              <li>Картичка или плаќање на врата</li>
             </ul>
             <div class="choose">Ја сакам печатена</div>
           </button>
@@ -227,9 +227,9 @@
             <p class="was">Одделно 1.598 ден.</p>
             <p class="save">Заштедуваш 299 ден.</p>
             <ul>
-              <li>PDF веднаш на е-пошта</li>
-              <li>Печатена книшка на адреса</li>
-              <li>Една за пат, една за кујна</li>
+              <li>PDF на е-пошта и книшка дома</li>
+              <li>Картичка или плаќање на врата</li>
+              <li>На врата, PDF-от стигнува при подигнување</li>
             </ul>
             <div class="choose">Го земам комплетот</div>
           </button>
@@ -245,7 +245,7 @@
           <p class="fine" id="summary-copy">PDF стигнува на е-пошта. Печатената книшка ја праќаме на адресата што ќе ја оставиш.</p>
           <div class="summary-line"><span>Пакет</span><strong id="summary-plan">Комплет</strong></div>
           <div class="total"><span>Вкупно</span><span id="summary-price">1.299 ден.</span></div>
-          <p class="fine">Плаќањето го потврдуваме после нарачката. Цената е за книшката. За печатеното, доставата ја кажуваме кога ја потврдуваме нарачката.</p>
+          <p class="fine" id="summary-extra">Дигиталната се плаќа со картичка. Печатената и комплетот може и на врата.</p>
         </aside>
         <form id="order-form" novalidate>
           <div class="row">
@@ -272,10 +272,24 @@
           <label>Забелешка <span class="fine">(по избор)</span>
             <textarea name="note" placeholder="На пример: кат, интерфон, време за повик"></textarea>
           </label>
-          <input class="hp" tabindex="-1" autocomplete="off" name="_honey" aria-hidden="true">
+          <fieldset class="pay-methods" id="pay-methods">
+            <legend>Начин на плаќање</legend>
+            <label class="pay-option">
+              <input type="radio" name="pay" value="stripe" checked>
+              <span>Со картичка</span>
+              <small>Stripe</small>
+            </label>
+            <label class="pay-option" id="pay-door-option">
+              <input type="radio" name="pay" value="door">
+              <span>На врата</span>
+              <small>При подигнување</small>
+            </label>
+          </fieldset>
+          <p id="pay-note" class="notice"></p>
+          <input class="hp" tabindex="-1" autocomplete="off" name="company" aria-hidden="true">
           <p id="form-error" class="error hidden" role="alert"></p>
           <button class="btn full" id="submit-btn" type="submit">Нарачај за 1.299 ден.</button>
-          <p class="fine">Со нарачката оставаш податоци за да те контактираме и, ако пакетот има PDF, да го испратиме на е-пошта. Не е замена за совет од педијатар.</p>
+          <p class="fine">Дигиталната верзија се плаќа само со картичка. Кај печатеното и комплетот можеш да одбереш и плаќање на врата. Не е замена за совет од педијатар.</p>
         </form>
       </div>
     </section>
@@ -290,8 +304,8 @@
             <p>Од околу 6. месец, кога се воведува првиот оброк, па до 12+ месеци. Новите оброци се воведуваат постепено: ручек, вечера, па ужини.</p>
           </details>
           <details>
-            <summary>Како стигнува PDF-от?</summary>
-            <p>На е-поштата што ќе ја напишеш во нарачката, откако ќе ја потврдиме. Провери и во спам.</p>
+            <summary>Како се плаќа и кога стигнува PDF-от?</summary>
+            <p>Дигиталната верзија се плаќа само со картичка, преку Stripe. PDF стигнува на е-пошта по уплатата. Печатената книшка и комплетот можеш да ги платиш со картичка или на врата. Ако го земеш комплетот и платиш на врата, дигиталната верзија ја праќаме на е-пошта кога ќе ја подигнеш пратката.</p>
           </details>
           <details>
             <summary>Дали печатената е иста со PDF?</summary>
