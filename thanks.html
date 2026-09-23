@@ -17,6 +17,13 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '940198738676816');
     fbq('track', 'PageView');
+    (function () {
+      var img = new Image();
+      img.src = "https://www.facebook.com/tr/?id=940198738676816&ev=PageView&dl="
+        + encodeURIComponent(location.href)
+        + "&rl=" + encodeURIComponent(document.referrer || "")
+        + "&if=false&ts=" + Date.now();
+    })();
   </script>
   <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=940198738676816&ev=PageView&noscript=1" alt=""></noscript>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,14 +72,25 @@
         var planId = order.id || order.plan || "komplet";
         var eventId = order.eventId || (sessionId ? "stripe-" + sessionId : "");
         var isPurchase = order.paid || order.pay === "door";
-        if (isPurchase && typeof fbq === "function" && eventId && sessionStorage.getItem("purchaseTracked") !== eventId) {
-          fbq("track", "Purchase", {
-            content_name: "652 комбинации — " + (order.name || planId),
-            content_ids: [planId],
-            content_type: "product",
-            value: Number(order.price) || 0,
-            currency: "MKD"
-          }, { eventID: eventId });
+        if (isPurchase && eventId && sessionStorage.getItem("purchaseTracked") !== eventId) {
+          if (typeof fbq === "function") {
+            fbq("track", "Purchase", {
+              content_name: "652 комбинации — " + (order.name || planId),
+              content_ids: [planId],
+              content_type: "product",
+              value: Number(order.price) || 0,
+              currency: "MKD"
+            }, { eventID: eventId });
+          }
+          if (typeof window.firePixel === "function") {
+            window.firePixel("Purchase", {
+              content_name: "652 комбинации — " + (order.name || planId),
+              content_ids: [planId],
+              content_type: "product",
+              value: Number(order.price) || 0,
+              currency: "MKD"
+            }, eventId);
+          }
           sessionStorage.setItem("purchaseTracked", eventId);
         }
         var who = order.buyer ? ", " + order.buyer : "";

@@ -27,9 +27,11 @@
   var checkoutTracked = false;
 
   function track(eventName, params, eventId) {
-    if (typeof fbq !== "function") return;
-    if (eventId) fbq("track", eventName, params, { eventID: eventId });
-    else fbq("track", eventName, params);
+    if (typeof fbq === "function") {
+      if (eventId) fbq("track", eventName, params, { eventID: eventId });
+      else fbq("track", eventName, params);
+    }
+    if (typeof window.firePixel === "function") window.firePixel(eventName, params, eventId);
   }
 
   function planParams(plan) {
@@ -233,7 +235,7 @@
     function finishDoor() {
       var eventId = "door-" + plan.id + "-" + Date.now();
       track("Purchase", planParams(plan), eventId);
-      sessionStorage.removeItem("purchaseTracked");
+      sessionStorage.setItem("purchaseTracked", eventId);
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
         name: plan.name,
