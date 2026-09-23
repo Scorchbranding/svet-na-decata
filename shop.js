@@ -234,8 +234,7 @@
 
     function finishDoor() {
       var eventId = "door-" + plan.id + "-" + Date.now();
-      track("Purchase", planParams(plan), eventId);
-      sessionStorage.setItem("purchaseTracked", eventId);
+      sessionStorage.removeItem("purchaseSent");
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
         name: plan.name,
@@ -245,9 +244,7 @@
         pay: "door",
         eventId: eventId
       }));
-      window.setTimeout(function () {
-        window.location.href = "thanks.html";
-      }, 700);
+      window.location.href = "thanks.html";
     }
 
     function fail(message) {

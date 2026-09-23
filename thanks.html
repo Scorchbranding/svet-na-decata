@@ -70,28 +70,28 @@
           return;
         }
         var planId = order.id || order.plan || "komplet";
-        var eventId = order.eventId || (sessionId ? "stripe-" + sessionId : "");
+        var eventId = order.eventId || (sessionId ? "stripe-" + sessionId : "purchase-" + planId);
         var isPurchase = order.paid || order.pay === "door";
-        if (isPurchase && eventId && sessionStorage.getItem("purchaseTracked") !== eventId) {
-          if (typeof fbq === "function") {
-            fbq("track", "Purchase", {
-              content_name: "652 комбинации — " + (order.name || planId),
-              content_ids: [planId],
-              content_type: "product",
-              value: Number(order.price) || 0,
-              currency: "MKD"
-            }, { eventID: eventId });
-          }
-          if (typeof window.firePixel === "function") {
-            window.firePixel("Purchase", {
-              content_name: "652 комбинации — " + (order.name || planId),
-              content_ids: [planId],
-              content_type: "product",
-              value: Number(order.price) || 0,
-              currency: "MKD"
-            }, eventId);
-          }
-          sessionStorage.setItem("purchaseTracked", eventId);
+        if (isPurchase && sessionStorage.getItem("purchaseSent") !== eventId) {
+          var purchase = {
+            content_name: "652 комбинации — " + (order.name || planId),
+            content_ids: [planId],
+            content_type: "product",
+            value: Number(order.price) || 0,
+            currency: "MKD"
+          };
+          if (typeof fbq === "function") fbq("track", "Purchase", purchase, { eventID: eventId });
+          var img = new Image();
+          img.src = "https://www.facebook.com/tr/?id=940198738676816&ev=Purchase&dl="
+            + encodeURIComponent(location.href)
+            + "&if=false&ts=" + Date.now()
+            + "&eid=" + encodeURIComponent(eventId)
+            + "&cd[value]=" + encodeURIComponent(String(purchase.value))
+            + "&cd[currency]=MKD"
+            + "&cd[content_type]=product"
+            + "&cd[content_ids]=" + encodeURIComponent(planId)
+            + "&cd[content_name]=" + encodeURIComponent(purchase.content_name);
+          sessionStorage.setItem("purchaseSent", eventId);
         }
         var who = order.buyer ? ", " + order.buyer : "";
         title.textContent = "Фала" + who + ". " + (order.paid ? "Уплатата е примена." : "Нарачката е примена.");
