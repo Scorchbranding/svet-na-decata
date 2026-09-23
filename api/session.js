@@ -49,11 +49,13 @@ module.exports = async function handler(req, res) {
     }
     return json(res, 200, {
       paid: paid,
+      id: plan ? plan.id : "",
       plan: plan ? plan.id : "",
       name: plan ? plan.name : "",
       label: plan ? plan.label : "",
       price: plan ? plan.price : 0,
-      buyer: name.split(" ")[0] || ""
+      buyer: name.split(" ")[0] || "",
+      eventId: "stripe-" + id
     });
   } catch (error) {
     return json(res, 502, { error: error.publicMessage || "Не можеме да ја провериме уплатата." });

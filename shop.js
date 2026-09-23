@@ -26,8 +26,10 @@
   var selected = "komplet";
   var checkoutTracked = false;
 
-  function track(eventName, params) {
-    if (typeof fbq === "function") fbq("track", eventName, params);
+  function track(eventName, params, eventId) {
+    if (typeof fbq !== "function") return;
+    if (eventId) fbq("track", eventName, params, { eventID: eventId });
+    else fbq("track", eventName, params);
   }
 
   function planParams(plan) {
@@ -229,6 +231,8 @@
     button.textContent = pay === "stripe" ? "Се отвора плаќањето..." : "Се испраќа...";
 
     function finishDoor() {
+      var eventId = "door-" + plan.id + "-" + Date.now();
+      track("Purchase", planParams(plan), eventId);
       sessionStorage.removeItem("purchaseTracked");
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
@@ -236,9 +240,12 @@
         price: plan.price,
         label: plan.label,
         buyer: data.name.split(" ")[0],
-        pay: "door"
+        pay: "door",
+        eventId: eventId
       }));
-      window.location.href = "thanks.html";
+      window.setTimeout(function () {
+        window.location.href = "thanks.html";
+      }, 700);
     }
 
     function fail(message) {

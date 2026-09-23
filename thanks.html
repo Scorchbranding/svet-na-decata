@@ -62,6 +62,19 @@
           lead.textContent = "Ако формата не ја испрати, врати се и пробај повторно.";
           return;
         }
+        var planId = order.id || order.plan || "komplet";
+        var eventId = order.eventId || (sessionId ? "stripe-" + sessionId : "");
+        var isPurchase = order.paid || order.pay === "door";
+        if (isPurchase && typeof fbq === "function" && eventId && sessionStorage.getItem("purchaseTracked") !== eventId) {
+          fbq("track", "Purchase", {
+            content_name: "652 комбинации — " + (order.name || planId),
+            content_ids: [planId],
+            content_type: "product",
+            value: Number(order.price) || 0,
+            currency: "MKD"
+          }, { eventID: eventId });
+          sessionStorage.setItem("purchaseTracked", eventId);
+        }
         var who = order.buyer ? ", " + order.buyer : "";
         title.textContent = "Фала" + who + ". " + (order.paid ? "Уплатата е примена." : "Нарачката е примена.");
         lead.textContent = order.name + " · " + order.label + ".";
@@ -88,18 +101,6 @@
         steps.innerHTML = lines.map(function (line, index) {
           return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
         }).join("");
-
-        if (typeof fbq !== "function" || sessionStorage.getItem("purchaseTracked")) return;
-        var pixel = {
-          content_name: "652 комбинации — " + order.name,
-          content_ids: [order.id],
-          content_type: "product",
-          value: order.price,
-          currency: "MKD"
-        };
-        if (order.paid) fbq("track", "Purchase", pixel);
-        else fbq("track", "Lead", pixel);
-        sessionStorage.setItem("purchaseTracked", "1");
       }
 
       if (!sessionId) {
