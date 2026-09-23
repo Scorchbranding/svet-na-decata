@@ -131,6 +131,7 @@
     if (!box) return;
     box.textContent = message;
     box.classList.toggle("hidden", !message);
+    if (message) box.scrollIntoView({ block: "center" });
   }
 
   function isLocal() {
@@ -192,7 +193,7 @@
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     showError("");
-    var honey = form.querySelector('[name="company"]');
+    var honey = form.querySelector('[name="hp_leave_blank"]');
     if (honey && honey.value) return;
 
     function field(name) {
