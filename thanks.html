@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нарачката е примена | Свет на децата</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      var id = window.SITE && window.SITE.pixelId;
+      if (!id || !/^\d{5,}$/.test(String(id))) return;
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', String(id));
+      fbq('track', 'PageView');
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">652</span>
+        Свет на децата
+      </a>
+    </div>
+  </header>
+  <main class="thanks">
+    <div class="wrap">
+      <article class="thanks-card">
+        <div class="check" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5 9.2 17 19 7"/></svg>
+        </div>
+        <p class="section-kicker">Нарачка</p>
+        <h1 id="thanks-title">Ја примивме нарачката.</h1>
+        <p class="lead" id="thanks-lead">Те контактираме за потврда. Плаќањето сè уште не е поминато — го средиме заедно.</p>
+        <div class="steps" id="thanks-steps"></div>
+        <a class="btn" href="index.html">Назад кон страницата</a>
+      </article>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var raw = sessionStorage.getItem("order");
+      var order = null;
+      try { order = raw ? JSON.parse(raw) : null; } catch (e) { order = null; }
+
+      var title = document.getElementById("thanks-title");
+      var lead = document.getElementById("thanks-lead");
+      var steps = document.getElementById("thanks-steps");
+
+      if (!order) {
+        title.textContent = "Ако нарачката помина, наскоро се јавуваме.";
+        lead.textContent = "Ако формата не ја испрати, врати се и пробај повторно.";
+        return;
+      }
+
+      var who = order.buyer ? ", " + order.buyer : "";
+      title.textContent = "Фала" + who + ". Нарачката е примена.";
+      lead.textContent = order.name + " · " + order.label + ". Те контактираме за потврда и плаќање.";
+
+      var lines = [
+        "Ја проверуваме нарачката и ти се јавуваме на телефонот или на е-пошта."
+      ];
+      if (order.id === "pdf" || order.id === "komplet") {
+        lines.push("PDF-от го праќаме на е-поштата откако ќе се договориме за плаќање.");
+      }
+      if (order.id === "print" || order.id === "komplet") {
+        lines.push("За печатената книшка ти ја потврдуваме доставата и адресата.");
+      }
+      steps.innerHTML = lines.map(function (line, index) {
+        return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
+      }).join("");
+
+      if (typeof fbq === "function" && !sessionStorage.getItem("purchaseTracked")) {
+        var params = {
+          content_name: "652 комбинации — " + order.name,
+          content_ids: [order.id],
+          content_type: "product",
+          value: order.price,
+          currency: "MKD"
+        };
+        fbq("track", "Lead", params);
+        fbq("track", "Purchase", params);
+        sessionStorage.setItem("purchaseTracked", "1");
+      }
+    })();
+  </script>
+</body>
+</html>
