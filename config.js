@@ -6,7 +6,7 @@
  * ORDER_EMAIL — е-пошта каде стигнуваат нарачките
  */
 window.SITE = {
-  pixelId: "",
+  pixelId: "940198738676816",
   orderEmail: "",
   contactPhone: "",
   currency: "MKD",
