@@ -31,8 +31,8 @@ module.exports = async function handler(req, res) {
         notice: plan.id === "pdf"
           ? "PDF се испраќа на е-пошта по уплатата."
           : plan.id === "komplet"
-            ? "PDF се испраќа на е-пошта по уплатата. Печатената книшка се праќа на адреса."
-            : "Печатената книшка се праќа на адреса."
+            ? "PDF се испраќа на е-пошта по уплатата. Печатената верзија се праќа на адреса."
+            : "Печатената верзија се праќа на адреса."
       };
       if (meta.seller_notified !== "1") {
         const sent = await notifySeller(payload);
