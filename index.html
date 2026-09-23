@@ -11,29 +11,24 @@
   <meta property="og:locale" content="mk_MK">
   <meta name="theme-color" content="#1e3b30">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '940198738676816');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=940198738676816&ev=PageView&noscript=1" alt=""></noscript>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,560;0,9..144,650;1,9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="config.js"></script>
-  <script>
-    (function () {
-      var id = window.SITE && window.SITE.pixelId;
-      if (!id || !/^\d{5,}$/.test(String(id))) return;
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-      document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', String(id));
-      fbq('track', 'PageView');
-      var img = document.createElement('noscript');
-      document.addEventListener('DOMContentLoaded', function () {
-        var n = document.getElementById('pixel-noscript');
-        if (n) n.src = 'https://www.facebook.com/tr?id=' + encodeURIComponent(id) + '&ev=PageView&noscript=1';
-      });
-    })();
-  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -52,8 +47,6 @@
 <body>
   <a class="skip" href="#naracka">Кон нарачката</a>
   <div id="setup-banner" class="setup-banner hidden"></div>
-  <noscript><img id="pixel-noscript" height="1" width="1" style="display:none" alt=""></noscript>
-
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="#vrv">
