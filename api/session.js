@@ -1,4 +1,5 @@
 const { json, PLANS, stripeRequest, notifySeller } = require("../lib/orders");
+const { pushAlekstonOrder } = require("../lib/alekston");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") return json(res, 405, { error: "Методот не е дозволен." });
@@ -11,25 +12,39 @@ module.exports = async function handler(req, res) {
     const plan = PLANS[session.metadata && session.metadata.plan] || null;
     const paid = session.payment_status === "paid";
     const name = (session.metadata && session.metadata.customer_name) || "";
-    if (paid && plan && session.metadata.seller_notified !== "1") {
-      const sent = await notifySeller({
+    if (paid && plan) {
+      const meta = session.metadata || {};
+      const email = session.customer_email || (session.customer_details && session.customer_details.email) || "";
+      const payload = {
         planName: plan.name,
         label: plan.label,
+        price: plan.price,
         paymentLabel: "Платено со Stripe",
         name: name,
-        phone: session.metadata.phone || "",
-        email: session.customer_email || session.customer_details && session.customer_details.email || "",
-        city: session.metadata.city || "",
-        address: session.metadata.address || "",
-        note: session.metadata.note || "",
+        phone: meta.phone || "",
+        email: email,
+        city: meta.city || "",
+        address: meta.address || "",
+        note: meta.note || "",
+        paid: true,
+        externalId: session.id,
         notice: plan.id === "pdf"
           ? "PDF се испраќа на е-пошта по уплатата."
           : plan.id === "komplet"
             ? "PDF се испраќа на е-пошта по уплатата. Печатената книшка се праќа на адреса."
             : "Печатената книшка се праќа на адреса."
-      });
-      if (sent) {
-        await stripeRequest("checkout/sessions/" + id, { "metadata[seller_notified]": "1" });
+      };
+      if (meta.seller_notified !== "1") {
+        const sent = await notifySeller(payload);
+        if (sent) {
+          await stripeRequest("checkout/sessions/" + id, { "metadata[seller_notified]": "1" });
+        }
+      }
+      if (!meta.alekston_order_id) {
+        const alekston = await pushAlekstonOrder(payload);
+        if (alekston.ok && alekston.id) {
+          await stripeRequest("checkout/sessions/" + id, { "metadata[alekston_order_id]": alekston.id });
+        }
       }
     }
     return json(res, 200, {

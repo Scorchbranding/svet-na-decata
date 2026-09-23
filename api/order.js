@@ -1,4 +1,5 @@
 const { json, readBody, parseOrder, notifySeller } = require("../lib/orders");
+const { pushAlekstonOrder } = require("../lib/alekston");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { error: "Методот не е дозволен." });
@@ -14,11 +15,17 @@ module.exports = async function handler(req, res) {
       ? "Плаќање на врата. Дигиталната верзија се испраќа на е-пошта при подигнување на пратката."
       : "Плаќање на врата, при подигнување на пратката.";
 
-    const sent = await notifySeller(Object.assign({}, parsed.order, {
+    const payload = Object.assign({}, parsed.order, {
       paymentLabel: "На врата",
-      notice: notice
-    }));
-    if (!sent) {
+      notice: notice,
+      paid: false
+    });
+    const sent = await notifySeller(payload);
+    const alekston = await pushAlekstonOrder(payload);
+    if (!alekston.ok && !alekston.skipped) {
+      return json(res, 502, { error: alekston.error || "Нарачката не се запиша во Alekston." });
+    }
+    if (!sent && !alekston.ok) {
       return json(res, 503, { error: "Нарачките на врата моментално не се примаат." });
     }
     return json(res, 200, { ok: true });
