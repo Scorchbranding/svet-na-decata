@@ -443,6 +443,7 @@ textarea { min-height: 90px; resize: vertical; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .hidden { display: none !important; }
 .fine { color: var(--muted); font-size: 13px; margin: 0; }
+label .fine { font-weight: 400; }
 .error {
   color: var(--clay-dark);
   background: #fde8e1;
