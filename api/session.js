@@ -1,10 +1,20 @@
-const { json, PLANS, stripeRequest, notifySeller } = require("../lib/orders");
-const { pushAlekstonOrder } = require("../lib/alekston");
+const { json, stripeRequest, PLANS } = require("../lib/orders");
+const { recordPaidSession } = require("../lib/recordPaid");
+
+function sessionId(req) {
+  const fromQuery = req.query && (req.query.session_id || req.query.sessionId);
+  if (fromQuery) return String(fromQuery);
+  try {
+    const url = new URL(req.url, "https://svetnadecata.com");
+    return url.searchParams.get("session_id") || "";
+  } catch (error) {
+    return "";
+  }
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") return json(res, 405, { error: "Методот не е дозволен." });
-  const url = new URL(req.url, "https://svet-na-decata.vercel.app");
-  const id = url.searchParams.get("session_id") || "";
+  const id = sessionId(req);
   if (!/^cs_[A-Za-z0-9_]+$/.test(id)) return json(res, 400, { error: "Нема уплата за приказ." });
 
   try {
@@ -12,40 +22,10 @@ module.exports = async function handler(req, res) {
     const plan = PLANS[session.metadata && session.metadata.plan] || null;
     const paid = session.payment_status === "paid";
     const name = (session.metadata && session.metadata.customer_name) || "";
+    let alekstonError = "";
     if (paid && plan) {
-      const meta = session.metadata || {};
-      const email = session.customer_email || (session.customer_details && session.customer_details.email) || "";
-      const payload = {
-        planName: plan.name,
-        label: plan.label,
-        price: plan.price,
-        paymentLabel: "Платено со Stripe",
-        name: name,
-        phone: meta.phone || "",
-        email: email,
-        city: meta.city || "",
-        address: meta.address || "",
-        note: meta.note || "",
-        paid: true,
-        externalId: session.id,
-        notice: plan.id === "pdf"
-          ? "PDF се испраќа на е-пошта по уплатата."
-          : plan.id === "komplet"
-            ? "PDF се испраќа на е-пошта по уплатата. Печатената верзија се праќа на адреса."
-            : "Печатената верзија се праќа на адреса."
-      };
-      if (meta.seller_notified !== "1") {
-        const sent = await notifySeller(payload);
-        if (sent) {
-          await stripeRequest("checkout/sessions/" + id, { "metadata[seller_notified]": "1" });
-        }
-      }
-      if (!meta.alekston_order_id) {
-        const alekston = await pushAlekstonOrder(payload);
-        if (alekston.ok && alekston.id) {
-          await stripeRequest("checkout/sessions/" + id, { "metadata[alekston_order_id]": alekston.id });
-        }
-      }
+      const recorded = await recordPaidSession(session);
+      if (!recorded.ok && !recorded.already) alekstonError = recorded.error || "Alekston не ја прими нарачката.";
     }
     return json(res, 200, {
       paid: paid,
@@ -55,7 +35,8 @@ module.exports = async function handler(req, res) {
       label: plan ? plan.label : "",
       price: plan ? plan.price : 0,
       buyer: name.split(" ")[0] || "",
-      eventId: "stripe-" + id
+      eventId: "stripe-" + id,
+      alekston: alekstonError ? "failed" : "ok"
     });
   } catch (error) {
     return json(res, 502, { error: error.publicMessage || "Не можеме да ја провериме уплатата." });
