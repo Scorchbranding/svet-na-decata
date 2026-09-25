@@ -51,7 +51,8 @@
         <h1 id="thanks-title">Ја примивме нарачката.</h1>
         <p class="lead" id="thanks-lead">Те контактираме за потврда. Плаќањето сè уште не е поминато — го средиме заедно.</p>
         <div class="steps" id="thanks-steps"></div>
-        <a class="btn" href="index.html">Назад кон страницата</a>
+        <a class="btn" id="pdf-download" href="#" hidden>Симни го PDF-от</a>
+        <a class="btn secondary" href="index.html">Назад кон страницата</a>
       </article>
     </div>
   </main>
@@ -107,10 +108,10 @@
           lines.push("Печатената верзија ја носиме на адресата од нарачката.");
         } else if (order.id === "pdf") {
           lines.push("Плаќањето со картичка е примено.");
-          lines.push("PDF-от го праќаме на е-поштата од нарачката.");
+          lines.push("PDF-от е готов. Симни го од копчето подолу.");
         } else if (order.id === "komplet") {
           lines.push("Плаќањето со картичка е примено.");
-          lines.push("PDF-от го праќаме на е-пошта по уплатата.");
+          lines.push("PDF-от е готов. Симни го од копчето подолу.");
           lines.push("Печатената верзија ја праќаме на адресата.");
         } else {
           lines.push("Плаќањето со картичка е примено.");
@@ -119,6 +120,12 @@
         steps.innerHTML = lines.map(function (line, index) {
           return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
         }).join("");
+        var download = document.getElementById("pdf-download");
+        var canDownload = order.paid && sessionId && (planId === "pdf" || planId === "komplet");
+        if (download) {
+          download.hidden = !canDownload;
+          if (canDownload) download.href = "/api/download?session_id=" + encodeURIComponent(sessionId);
+        }
       }
 
       if (!sessionId) {

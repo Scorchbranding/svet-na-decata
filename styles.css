@@ -552,6 +552,7 @@ details p { margin: 8px 0 0; color: var(--muted); }
   display: grid; place-items: center; margin-bottom: 12px;
 }
 .steps { margin: 18px 0; }
+.thanks-card .btn { margin: 0 10px 10px 0; }
 .steps div { display: grid; grid-template-columns: 28px 1fr; gap: 10px; }
 
 @media (max-width: 900px) {
