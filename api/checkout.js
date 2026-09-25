@@ -10,13 +10,14 @@ module.exports = async function handler(req, res) {
     if (!origin) return json(res, 400, { error: "Нарачката мора да тргне од страницата." });
 
     const { plan, order } = parsed;
+    const amount = Math.max(plan.amount, 5000);
     const params = {
       mode: "payment",
       locale: "auto",
       customer_email: order.email,
       "line_items[0][quantity]": "1",
       "line_items[0][price_data][currency]": "mkd",
-      "line_items[0][price_data][unit_amount]": String(plan.amount),
+      "line_items[0][price_data][unit_amount]": String(amount),
       "line_items[0][price_data][product_data][name]": plan.stripeName,
       "metadata[plan]": plan.id,
       "metadata[customer_name]": order.name,

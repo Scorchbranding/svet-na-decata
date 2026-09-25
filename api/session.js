@@ -1,4 +1,4 @@
-const { json, stripeRequest, PLANS } = require("../lib/orders");
+const { json, stripeRequest, PLANS, denarLabel } = require("../lib/orders");
 const { recordPaidSession } = require("../lib/recordPaid");
 
 function sessionId(req) {
@@ -27,13 +27,14 @@ module.exports = async function handler(req, res) {
       const recorded = await recordPaidSession(session);
       if (!recorded.ok && !recorded.already) alekstonError = recorded.error || "Alekston не ја прими нарачката.";
     }
+    const paidPrice = session.amount_total != null ? Math.round(Number(session.amount_total) / 100) : (plan ? plan.price : 0);
     return json(res, 200, {
       paid: paid,
       id: plan ? plan.id : "",
       plan: plan ? plan.id : "",
       name: plan ? plan.name : "",
-      label: plan ? plan.label : "",
-      price: plan ? plan.price : 0,
+      label: plan ? denarLabel(paidPrice) : "",
+      price: paidPrice,
       buyer: name.split(" ")[0] || "",
       eventId: "stripe-" + id,
       alekston: alekstonError ? "failed" : "ok"

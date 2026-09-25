@@ -232,14 +232,14 @@
     button.disabled = true;
     button.textContent = pay === "stripe" ? "Се отвора плаќањето..." : "Се испраќа...";
 
-    function finishDoor() {
+    function finishDoor(paid) {
       var eventId = "door-" + plan.id + "-" + Date.now();
       sessionStorage.removeItem("purchaseSent");
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
         name: plan.name,
-        price: plan.price,
-        label: plan.label,
+        price: paid && paid.price ? paid.price : plan.price,
+        label: paid && paid.label ? paid.label : plan.label,
         buyer: data.name.split(" ")[0],
         pay: "door",
         eventId: eventId
@@ -261,6 +261,7 @@
       city: data.city,
       address: data.address,
       note: data.note,
+      code: field("code"),
       origin: location.origin
     };
 
@@ -281,7 +282,7 @@
         window.location.href = body.url;
         return;
       }
-      finishDoor();
+      finishDoor(body);
     }).catch(function (error) {
       if (isLocal() && pay === "door") {
         finishDoor();

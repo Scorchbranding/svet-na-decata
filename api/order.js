@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
     if (!sent && !alekston.ok) {
       return json(res, 503, { error: "Нарачките на врата моментално не се примаат." });
     }
-    return json(res, 200, { ok: true });
+    return json(res, 200, { ok: true, price: payload.price, label: payload.label });
   } catch (error) {
     return json(res, 502, { error: "Нарачката не помина. Пробај повторно." });
   }
