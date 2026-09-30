@@ -520,6 +520,8 @@ details p { margin: 8px 0 0; color: var(--muted); }
   font-size: 14px;
 }
 .site-footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.legal-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.legal-links a { color: inherit; opacity: 0.45; font-size: 11px; text-decoration: none; }
 
 .mobile-bar {
   display: none;

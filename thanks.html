@@ -51,8 +51,13 @@
         <h1 id="thanks-title">Ја примивме нарачката.</h1>
         <p class="lead" id="thanks-lead">Те контактираме за потврда. Плаќањето сè уште не е поминато — го средиме заедно.</p>
         <div class="steps" id="thanks-steps"></div>
-        <a class="btn" id="pdf-download" href="#" hidden>Симни го PDF-от</a>
+        <a class="btn" id="pdf-download" href="#" hidden>Кликни за да го симнеш PDF-от</a>
         <a class="btn secondary" href="index.html">Назад кон страницата</a>
+        <nav class="legal-links" aria-label="Правни информации">
+          <a href="privatnost.html">Приватност</a>
+          <a href="kolacinja.html">Колачиња</a>
+          <a href="uslovi.html">Услови за купување</a>
+        </nav>
       </article>
     </div>
   </main>
@@ -96,32 +101,34 @@
         }
         var who = order.buyer ? ", " + order.buyer : "";
         title.textContent = "Фала" + who + ". " + (order.paid ? "Уплатата е примена." : "Нарачката е примена.");
-        lead.textContent = order.name + " · " + order.label + ".";
+        var canDownload = order.paid && sessionId && (planId === "pdf" || planId === "komplet");
+        lead.textContent = canDownload
+          ? "Кликни за да го симнеш PDF-от. Провери ја и е-поштата — истиот линк е таму."
+          : "Провери ја е-поштата. Таму е потврдата за нарачката.";
 
         var lines = [];
         if (order.pay === "door" && order.id === "komplet") {
-          lines.push("Плаќаш при подигнување на пратката.");
-          lines.push("Дигиталната верзија ја праќаме на твојата е-пошта кога ќе ја подигнеш пратката.");
-          lines.push("Печатената верзија ја носиме на адресата од нарачката.");
+          lines.push("Плаќаш при подигнување на пратката. Доставата е 170 ден.");
+          lines.push("Провери ја е-поштата за потврда.");
+          lines.push("Линкот за PDF стигнува кога ќе ја подигнеш пратката.");
         } else if (order.pay === "door") {
-          lines.push("Плаќаш при подигнување на пратката.");
-          lines.push("Печатената верзија ја носиме на адресата од нарачката.");
+          lines.push("Плаќаш при подигнување на пратката. Доставата е 170 ден.");
+          lines.push("Провери ја е-поштата за потврда.");
         } else if (order.id === "pdf") {
-          lines.push("Плаќањето со картичка е примено.");
-          lines.push("Потврдата и линкот за симнување се на е-поштата. Линкот останува активен.");
+          lines.push("Кликни на копчето за да го симнеш PDF-от.");
+          lines.push("Провери ја е-поштата ако сакаш да го симнеш подоцна.");
         } else if (order.id === "komplet") {
-          lines.push("Плаќањето со картичка е примено.");
-          lines.push("Потврдата и линкот за симнување се на е-поштата. Линкот останува активен.");
-          lines.push("Печатената верзија ја праќаме на адресата.");
+          lines.push("Кликни на копчето за да го симнеш PDF-от.");
+          lines.push("Провери ја е-поштата ако сакаш да го симнеш подоцна.");
+          lines.push("Печатената верзија ја праќаме на адресата. Доставата е 170 ден.");
         } else {
-          lines.push("Плаќањето со картичка е примено.");
-          lines.push("Печатената верзија ја праќаме на адресата.");
+          lines.push("Провери ја е-поштата за потврда.");
+          lines.push("Печатената верзија ја праќаме на адресата. Доставата е 170 ден.");
         }
         steps.innerHTML = lines.map(function (line, index) {
           return "<div><strong>" + (index + 1) + "</strong><span>" + line + "</span></div>";
         }).join("");
         var download = document.getElementById("pdf-download");
-        var canDownload = order.paid && sessionId && (planId === "pdf" || planId === "komplet");
         if (download) {
           download.hidden = !canDownload;
           if (canDownload) download.href = "/api/download?session_id=" + encodeURIComponent(sessionId);

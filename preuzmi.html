@@ -27,7 +27,12 @@
         <h1 id="page-title">Го проверуваме линкот...</h1>
         <p class="lead" id="page-lead"></p>
         <div class="steps" id="page-steps"></div>
-        <a class="btn" id="pdf-download" href="#" hidden>Симни го PDF-от</a>
+        <a class="btn" id="pdf-download" href="#" hidden>Кликни за да го симнеш PDF-от</a>
+        <nav class="legal-links" aria-label="Правни информации">
+          <a href="privatnost.html">Приватност</a>
+          <a href="kolacinja.html">Колачиња</a>
+          <a href="uslovi.html">Услови за купување</a>
+        </nav>
       </article>
     </div>
   </main>
@@ -54,8 +59,8 @@
           }
           title.textContent = "Потврда за нарачката";
           lead.textContent = (order.name || "652 комбинации") + " · " + (order.label || "") + ".";
-          steps.innerHTML = "<div><strong>1</strong><span>Уплатата е примена.</span></div>"
-            + "<div><strong>2</strong><span>Линкот останува активен. Можеш да го симнеш PDF-от повторно.</span></div>";
+          steps.innerHTML = "<div><strong>1</strong><span>Кликни за да го симнеш PDF-от.</span></div>"
+            + "<div><strong>2</strong><span>Провери ја и е-поштата. Линкот останува активен.</span></div>";
           download.hidden = false;
           download.href = "/api/download?session_id=" + encodeURIComponent(sessionId);
         })
