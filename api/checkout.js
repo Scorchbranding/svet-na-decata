@@ -1,4 +1,4 @@
-const { json, readBody, parseOrder, allowedOrigin, stripeRequest } = require("../lib/orders");
+const { json, readBody, parseOrder, allowedOrigin, stripeRequest, SITE_TAG } = require("../lib/orders");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { error: "Методот не е дозволен." });
@@ -19,7 +19,9 @@ module.exports = async function handler(req, res) {
       "line_items[0][price_data][currency]": "mkd",
       "line_items[0][price_data][unit_amount]": String(amount),
       "line_items[0][price_data][product_data][name]": plan.stripeName,
+      "metadata[site]": SITE_TAG,
       "metadata[plan]": plan.id,
+      "payment_intent_data[metadata][site]": SITE_TAG,
       "metadata[customer_name]": order.name,
       "metadata[phone]": order.phone,
       "metadata[city]": order.city,

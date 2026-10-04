@@ -1,4 +1,4 @@
-const { json, stripeRequest, PLANS, denarLabel } = require("../lib/orders");
+const { json, stripeRequest, PLANS, denarLabel, isForeignSession } = require("../lib/orders");
 const { recordPaidSession } = require("../lib/recordPaid");
 
 function sessionId(req) {
@@ -19,8 +19,9 @@ module.exports = async function handler(req, res) {
 
   try {
     const session = await stripeRequest("checkout/sessions/" + id, null, "GET");
-    const plan = PLANS[session.metadata && session.metadata.plan] || null;
-    const paid = session.payment_status === "paid";
+    const foreign = isForeignSession(session); // another site's session: show nothing, record nothing
+    const plan = foreign ? null : PLANS[session.metadata && session.metadata.plan] || null;
+    const paid = !foreign && session.payment_status === "paid";
     const name = (session.metadata && session.metadata.customer_name) || "";
     let alekstonError = "";
     if (paid && plan) {

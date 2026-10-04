@@ -1,6 +1,6 @@
 const { Readable } = require("stream");
 const { pipeline } = require("stream/promises");
-const { json, stripeRequest, PLANS } = require("../lib/orders");
+const { json, stripeRequest, PLANS, isForeignSession } = require("../lib/orders");
 
 const BLOB_URL = "https://axnyvclgzhkyx3k6.private.blob.vercel-storage.com/652-kombinacii.pdf";
 
@@ -23,7 +23,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const session = await stripeRequest("checkout/sessions/" + id, null, "GET");
-    const plan = PLANS[session.metadata && session.metadata.plan] || null;
+    const plan = isForeignSession(session) ? null : PLANS[session.metadata && session.metadata.plan] || null;
     const digital = plan && (plan.id === "pdf" || plan.id === "komplet");
     if (session.payment_status !== "paid" || !digital) {
       return json(res, 403, { error: "Овој PDF е достапен по платена нарачка за дигитална верзија." });
