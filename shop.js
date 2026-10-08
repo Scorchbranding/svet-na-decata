@@ -23,8 +23,7 @@
     }
   };
 
-  var selected = "komplet";
-  var checkoutTracked = false;
+  var selected = "pdf";
 
   function track(eventName, params, eventId) {
     if (typeof fbq === "function") {
@@ -48,8 +47,9 @@
     return id === "print" || id === "komplet";
   }
 
-  function applyPlan(id, fromClick) {
-    var plan = PLANS[id] || PLANS.komplet;
+  function applyPlan(id) {
+    var plan = PLANS[id] || PLANS.pdf;
+    var comingFromPdf = selected === "pdf" && plan.id !== "pdf";
     selected = plan.id;
     document.querySelectorAll(".plan").forEach(function (el) {
       el.setAttribute("aria-pressed", el.getAttribute("data-plan") === plan.id ? "true" : "false");
@@ -58,32 +58,37 @@
     var copy = document.getElementById("summary-copy");
     var planName = document.getElementById("summary-plan");
     var price = document.getElementById("summary-price");
-    var submit = document.getElementById("submit-btn");
-    var address = document.getElementById("address-fields");
+    var extra = document.getElementById("summary-extra");
     var barPrice = document.getElementById("bar-price");
     var barName = document.getElementById("bar-name");
+    var delivery = document.getElementById("delivery-fields");
+    var payMethods = document.getElementById("pay-methods");
+    var ship = needsAddress(plan.id);
     if (name) name.textContent = plan.name;
     if (copy) copy.textContent = plan.copy;
     if (planName) planName.textContent = plan.name;
     if (price) price.textContent = plan.label;
-    if (submit) submit.textContent = "Нарачај за " + plan.label;
     if (barPrice) barPrice.textContent = plan.label;
     if (barName) barName.textContent = plan.name;
-    if (address) address.classList.toggle("hidden", !needsAddress(plan.id));
+    if (extra) {
+      extra.textContent = ship
+        ? "Печатената верзија оди на адреса. Достава 170 ден. Може со картичка или на врата."
+        : "Само картичка. Нема адреса и нема достава — линкот за PDF стигнува на е-пошта.";
+    }
+    if (delivery) delivery.classList.toggle("hidden", !ship);
+    if (payMethods) payMethods.classList.toggle("hidden", !ship);
     var city = document.querySelector('[name="city"]');
     var addr = document.querySelector('[name="address"]');
-    if (city) city.required = needsAddress(plan.id);
-    if (addr) addr.required = needsAddress(plan.id);
+    if (city) city.required = ship;
+    if (addr) addr.required = ship;
     var barBtn = document.getElementById("bar-btn");
     if (barBtn) barBtn.setAttribute("data-plan", plan.id);
-    updatePayUI();
-    if (fromClick) {
-      track("AddToCart", planParams(plan));
-      if (!checkoutTracked) {
-        checkoutTracked = true;
-        track("InitiateCheckout", planParams(plan));
-      }
+    if (comingFromPdf) {
+      var doorInput = document.querySelector('#pay-door-option input');
+      if (doorInput) doorInput.checked = true;
     }
+    try { sessionStorage.setItem("selectedPlan", plan.id); } catch (error) {}
+    updatePayUI();
   }
 
   function currentPay() {
@@ -93,10 +98,11 @@
   }
 
   function updatePayUI() {
-    var plan = PLANS[selected] || PLANS.komplet;
+    var plan = PLANS[selected] || PLANS.pdf;
     var pay = currentPay();
     var door = document.getElementById("pay-door-option");
     var note = document.getElementById("pay-note");
+    var foot = document.getElementById("form-foot");
     var submit = document.getElementById("submit-btn");
     var stripeRadio = document.querySelector('input[name="pay"][value="stripe"]');
     if (selected === "pdf" && stripeRadio) stripeRadio.checked = true;
@@ -110,6 +116,12 @@
         ? "Плати со картичка · " + plan.label
         : "Нарачај на врата · " + plan.label;
     }
+    if (foot) {
+      foot.textContent = selected === "pdf"
+        ? "По уплатата со картичка добиваш линк за симнување на е-пошта. Не е замена за совет од педијатар."
+        : "Дигиталната верзија се плаќа само со картичка. Кај печатената верзија и комплетот можеш да одбереш и плаќање на врата. Не е замена за совет од педијатар.";
+    }
+    try { sessionStorage.setItem("selectedPay", pay); } catch (error) {}
     if (!note) return;
     if (selected === "pdf") {
       note.textContent = "Дигиталната верзија се плаќа само со картичка. По уплатата на е-пошта стигнува потврда и линк за симнување. Линкот останува активен.";
@@ -144,7 +156,7 @@
 
   document.querySelectorAll("[data-plan]").forEach(function (el) {
     el.addEventListener("click", function () {
-      applyPlan(el.getAttribute("data-plan"), true);
+      applyPlan(el.getAttribute("data-plan"));
       if (el.classList.contains("plan")) {
         var target = document.getElementById("naracka");
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -168,10 +180,10 @@
   }
 
   track("ViewContent", {
-    content_name: "652 комбинации",
+    content_name: "652 комбинации — Само PDF",
     content_type: "product",
-    content_ids: ["pdf", "print", "komplet"],
-    value: 1299,
+    content_ids: ["pdf"],
+    value: 599,
     currency: "MKD"
   });
 
@@ -179,13 +191,27 @@
     input.addEventListener("change", updatePayUI);
   });
 
+  var initialPlan = "pdf";
+  var savedPay = "";
   if (location.search.indexOf("payment=cancel") !== -1) {
+    try {
+      var savedPlan = sessionStorage.getItem("selectedPlan");
+      if (PLANS[savedPlan]) initialPlan = savedPlan;
+      savedPay = sessionStorage.getItem("selectedPay") || "";
+    } catch (error) {}
+  }
+  applyPlan(initialPlan);
+
+  if (location.search.indexOf("payment=cancel") !== -1) {
+    var savedRadio = savedPay && document.querySelector('input[name="pay"][value="' + savedPay + '"]');
+    if (savedRadio && !savedRadio.disabled) {
+      savedRadio.checked = true;
+      updatePayUI();
+    }
     showError("Плаќањето е откажано. Можеш да пробаш повторно.");
     var checkout = document.getElementById("naracka");
     if (checkout) checkout.scrollIntoView();
   }
-
-  applyPlan("komplet", false);
 
   var form = document.getElementById("order-form");
   if (!form) return;
@@ -218,7 +244,11 @@
     if (data.name.length < 3) return showError("Напиши име и презиме.");
     if (data.phone.replace(/\D/g, "").length < 8) return showError("Напиши телефон за да ја потврдиме нарачката.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError("Напиши е-пошта — на неа стигнува PDF-от и потврдата.");
-    if (needsAddress(plan.id) && (data.city.length < 2 || data.address.length < 4)) {
+    if (!needsAddress(plan.id)) {
+      data.city = "";
+      data.address = "";
+      data.note = "";
+    } else if (data.city.length < 2 || data.address.length < 4) {
       return showError("За печатената верзија ни треба град и адреса.");
     }
 
@@ -278,11 +308,18 @@
     }).then(function (body) {
       if (pay === "stripe") {
         if (!body.url) throw new Error("Не добивме линк за плаќање.");
-        track("InitiateCheckout", planParams(plan));
-        window.location.href = body.url;
+        var eventStamp = plan.id + "-" + Date.now();
+        track("AddToCart", planParams(plan), "atc-" + eventStamp);
+        track("InitiateCheckout", planParams(plan), "ic-" + eventStamp);
+        window.setTimeout(function () {
+          window.location.href = body.url;
+        }, 300);
         return;
       }
-      finishDoor(body);
+      track("AddToCart", planParams(plan), "atc-door-" + plan.id + "-" + Date.now());
+      window.setTimeout(function () {
+        finishDoor(body);
+      }, 300);
     }).catch(function (error) {
       if (isLocal() && pay === "door") {
         finishDoor();
