@@ -64,7 +64,7 @@
         <a href="#vnatre">Што има внатре</a>
         <a href="#paketi">Пакети</a>
         <a href="#prasanja">Прашања</a>
-        <a class="btn" href="#naracka" data-plan="komplet">Нарачај · 1.299 ден.</a>
+        <a class="btn" href="#naracka" data-plan="pdf">PDF · 599 ден.</a>
       </nav>
     </div>
   </header>
@@ -82,20 +82,19 @@
             <li><span class="tick" aria-hidden="true">✓</span><span>По уплата со картичка добиваш потврда и линк за симнување на е-пошта. Печатената верзија на квалитетна хартија е за кујна.</span></li>
           </ul>
           <div class="hero-actions">
-            <a class="btn" href="#naracka" data-plan="komplet">Го земам комплетот · 1.299 ден.</a>
-            <a class="ghost" href="#paketi">Види ги трите пакети</a>
+            <a class="btn" href="#naracka" data-plan="pdf">Го земам PDF-от · 599 ден.</a>
+            <a class="btn quiet" href="#naracka" data-plan="komplet">Или комплет · 1.299 ден.</a>
           </div>
-          <p class="price-note">Одделно се 1.598 ден. Комплетот е <strong>1.299 ден.</strong> — заштеда од 299 ден.</p>
+          <p class="price-note">PDF за <strong>599 ден.</strong> — линк за симнување на е-пошта по уплата со картичка. Печатена верзија: 999 ден. + достава 170 ден. Комплетот е 1.299 ден. + достава 170 ден.</p>
         </div>
         <aside class="book" aria-label="Преглед на содржината">
           <div class="book-top"><span>Свет на децата</span><span>6–12+ мес.</span></div>
           <h2>652<span>комбинации за мирни оброци</span></h2>
-          <div class="cols"><span>Овошје</span><span>Зеленчук</span><span>Месо</span><span>Риба</span><span>Јајце</span></div>
           <div class="sample">
-            <div>Авокадо + банана + гриз</div>
-            <div>Брокула + морков + тиквичка</div>
-            <div>Риба + батат + брокула</div>
-            <div>Жолчка + тиква + тиквичка</div>
+            <div><span>Овошје</span><strong>Авокадо + банана + гриз</strong></div>
+            <div><span>Зеленчук</span><strong>Брокула + морков + тиквичка</strong></div>
+            <div><span>Риба</span><strong>Риба + батат + брокула</strong></div>
+            <div><span>Јајце</span><strong>Жолчка + тиква + тиквичка</strong></div>
           </div>
           <p class="book-foot">Ова е само форматот. Внатре се стотици спојувања, плус насоки што да додадеш и што да изоставиш.</p>
         </aside>
@@ -198,7 +197,8 @@
         <h2>Три цени. Иста содржина.</h2>
         <p class="sub">599 ден. за дигитална верзија. По уплата добиваш потврда и линк за симнување. 999 ден. за печатена верзија на квалитетна хартија, плус достава 170 ден. 1.299 ден. за двете заедно — 299 ден. помалку отколку одделно, плус достава 170 ден. за печатената.</p>
         <div class="plans">
-          <button class="plan" type="button" data-plan="pdf">
+          <button class="plan featured" type="button" data-plan="pdf" aria-pressed="true">
+            <div class="badge">Најчесто избран</div>
             <div class="name">Само дигитална</div>
             <div class="sum">599<small>ден.</small></div>
             <p>Се плаќа само со картичка. По уплатата добиваш линк за симнување.</p>
@@ -220,8 +220,7 @@
             </ul>
             <div class="choose">Ја сакам печатена</div>
           </button>
-          <button class="plan featured" type="button" data-plan="komplet">
-            <div class="badge">Најпаметен избор</div>
+          <button class="plan" type="button" data-plan="komplet">
             <div class="name">Дигитална + печатена</div>
             <div class="sum">1.299<small>ден.</small></div>
             <p class="was">Одделно 1.598 ден.</p>
@@ -241,11 +240,11 @@
       <div class="wrap checkout">
         <aside class="summary">
           <p class="section-kicker">Нарачка</p>
-          <h3 id="summary-name">Дигитална + печатена</h3>
-          <p class="fine" id="summary-copy">PDF стигнува на е-пошта. Печатената верзија на квалитетна хартија ја праќаме на адресата што ќе ја оставиш.</p>
-          <div class="summary-line"><span>Пакет</span><strong id="summary-plan">Комплет</strong></div>
-          <div class="total"><span>Вкупно</span><span id="summary-price">1.299 ден.</span></div>
-          <p class="fine" id="summary-extra">Дигиталната се плаќа со картичка. Печатената и комплетот може и на врата.</p>
+          <h3 id="summary-name">Само PDF</h3>
+          <p class="fine" id="summary-copy">Се плаќа само со картичка. По уплатата добиваш потврда и линк за симнување на е-пошта. Линкот останува активен.</p>
+          <div class="summary-line"><span>Пакет</span><strong id="summary-plan">Само PDF</strong></div>
+          <div class="total"><span>Вкупно</span><span id="summary-price">599 ден.</span></div>
+          <p class="fine" id="summary-extra">Само картичка. Нема адреса и нема достава — линкот за PDF стигнува на е-пошта.</p>
         </aside>
         <form id="order-form" novalidate>
           <div class="row">
@@ -260,8 +259,8 @@
             <input name="email" type="email" autocomplete="email" required placeholder="ana@email.com">
             <span class="fine">Тука стигнува потврдата. За дигитална верзија платена со картичка, и линкот за симнување.</span>
           </label>
-          <div id="address-fields">
-            <div class="row">
+          <div id="delivery-fields" class="hidden">
+            <div class="row" id="address-fields">
               <label>Град
                 <input name="city" autocomplete="address-level2" placeholder="Скопје">
               </label>
@@ -269,22 +268,22 @@
                 <input name="address" autocomplete="street-address" placeholder="Улица и број">
               </label>
             </div>
+            <label>Забелешка <span class="fine">(по избор)</span>
+              <textarea name="note" placeholder="На пример: кат, интерфон, време за повик"></textarea>
+            </label>
           </div>
-          <label>Забелешка <span class="fine">(по избор)</span>
-            <textarea name="note" placeholder="На пример: кат, интерфон, време за повик"></textarea>
-          </label>
           <label>Код за попуст <span class="fine">(по избор)</span>
             <input name="code" autocomplete="off" placeholder="Ако имаш код">
           </label>
-          <fieldset class="pay-methods" id="pay-methods">
+          <fieldset class="pay-methods hidden" id="pay-methods">
             <legend>Начин на плаќање</legend>
             <label class="pay-option">
-              <input type="radio" name="pay" value="stripe">
+              <input type="radio" name="pay" value="stripe" checked>
               <span>Со картичка</span>
               <small>Stripe</small>
             </label>
             <label class="pay-option" id="pay-door-option">
-              <input type="radio" name="pay" value="door" checked>
+              <input type="radio" name="pay" value="door">
               <span>На врата</span>
               <small>При подигнување</small>
             </label>
@@ -292,8 +291,8 @@
           <p id="pay-note" class="notice"></p>
           <input class="hp" tabindex="-1" autocomplete="off" name="hp_leave_blank" aria-hidden="true">
           <p id="form-error" class="error hidden" role="alert"></p>
-          <button class="btn full" id="submit-btn" type="submit">Нарачај за 1.299 ден.</button>
-          <p class="fine">Дигиталната верзија се плаќа само со картичка. Кај печатената верзија и комплетот можеш да одбереш и плаќање на врата. Не е замена за совет од педијатар.</p>
+          <button class="btn full" id="submit-btn" type="submit">Плати со картичка · 599 ден.</button>
+          <p class="fine" id="form-foot">По уплатата со картичка добиваш линк за симнување на е-пошта. Не е замена за совет од педијатар.</p>
         </form>
       </div>
     </section>
@@ -336,9 +335,12 @@
         <div class="final">
           <div>
             <h2>Утрешниот оброк нека е веќе напишан.</h2>
-            <p>Комплетот е 1.299 ден. PDF на е-пошта, печатена верзија на квалитетна хартија дома.</p>
+            <p>PDF за 599 ден. Линк за симнување на е-пошта по уплата со картичка.</p>
           </div>
-          <a class="btn" href="#naracka" data-plan="komplet">Нарачај го комплетот</a>
+          <div class="final-actions">
+            <a class="btn" href="#naracka" data-plan="pdf">Го земам PDF-от · 599 ден.</a>
+            <a class="btn quiet" href="#naracka" data-plan="komplet">Или комплет · 1.299 ден.</a>
+          </div>
         </div>
       </div>
     </section>
@@ -358,10 +360,10 @@
 
   <div class="mobile-bar">
     <div>
-      <b id="bar-price">1.299 ден.</b>
-      <span id="bar-name">Дигитална + печатена</span>
+      <b id="bar-price">599 ден.</b>
+      <span id="bar-name">Само PDF</span>
     </div>
-    <a class="btn" href="#naracka" data-plan="komplet" id="bar-btn">Нарачај</a>
+    <a class="btn" href="#naracka" data-plan="pdf" id="bar-btn">Плати PDF</a>
   </div>
 
   <script src="shop.js"></script>

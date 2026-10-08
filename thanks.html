@@ -77,7 +77,7 @@
         }
         var planId = order.id || order.plan || "komplet";
         var eventId = order.eventId || (sessionId ? "stripe-" + sessionId : "purchase-" + planId);
-        var isPurchase = order.paid || order.pay === "door";
+        var isPurchase = Boolean(order.paid);
         if (isPurchase && sessionStorage.getItem("purchaseSent") !== eventId) {
           var purchase = {
             content_name: "652 комбинации — " + (order.name || planId),
