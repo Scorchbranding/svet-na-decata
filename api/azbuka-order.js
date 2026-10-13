@@ -34,9 +34,10 @@ module.exports = async function handler(req, res) {
       alekstonProductName: "Мојата прва азбука — " + plan.name,
       productId: plan.productId,
       landing: cleanLanding(body.landing),
+      printer: "Ваша печатница",
       paymentLabel: "На врата",
       notice: (plan.id === "komplet" ? "PDF-от се испраќа на е-пошта. " : "") +
-        "Плаќање на врата: " + plan.label + " + " + DELIVERY + " ден. достава (ја плаќате на курирот).",
+        "Печатница: Ваша печатница. Плаќање на врата: " + plan.label + " + " + DELIVERY + " ден. достава (ја плаќате на курирот).",
       paid: false
     });
     const sent = await notifySeller(payload);
