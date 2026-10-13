@@ -33,6 +33,7 @@ module.exports = async function handler(req, res) {
     const payload = Object.assign(order, {
       productTitle: "Мојата прва азбука и бројки",
       alekstonProductName: "Мојата прва азбука — " + plan.name,
+      alekstonProductLabel: "Мојата прва азбука — " + plan.name,
       productId: plan.productId,
       landing: cleanLanding(body.landing),
       printer: "Ваша печатница",
