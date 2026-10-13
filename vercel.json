@@ -3,5 +3,15 @@
     "api/download.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/azbuka",
+      "destination": "https://moja-prva-azbuka.vercel.app/azbuka"
+    },
+    {
+      "source": "/azbuka/:path*",
+      "destination": "https://moja-prva-azbuka.vercel.app/azbuka/:path*"
+    }
+  ]
 }
