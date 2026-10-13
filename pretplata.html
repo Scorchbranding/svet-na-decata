@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нарачката е примена | Свет на децата</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '940198738676816');
+    fbq('track', 'PageView');
+    (function () {
+      var img = new Image();
+      img.src = "https://www.facebook.com/tr/?id=940198738676816&ev=PageView&dl="
+        + encodeURIComponent(location.href)
+        + "&rl=" + encodeURIComponent(document.referrer || "")
+        + "&if=false&ts=" + Date.now();
+    })();
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=940198738676816&ev=PageView&noscript=1" alt=""></noscript>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+<style>.xsell{display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}.xsell img{width:100%;height:auto;border-radius:14px;display:block}.xsell-body{display:flex;flex-direction:column;gap:6px}.xsell-body strong{font-family:var(--serif);font-size:1.45rem}.xsell-body span{color:var(--muted)}.xsell-cta{color:var(--clay)!important;font-weight:600}.xsell:hover .xsell-cta{text-decoration:underline}@media(max-width:640px){.xsell{grid-template-columns:1fr}}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">652</span>
+        Свет на децата
+      </a>
+    </div>
+  </header>
+  <main class="thanks"><div class="wrap"><article class="thanks-card">
+  <p class="section-kicker">Претплата</p>
+  <h1 id="t">Добредојдовте во месечните активности! 🎉</h1>
+  <p class="lead">Секој месец ви праќаме нов сет работни листови на е-пошта. Плаќањето од 490 ден. се зема автоматски еднаш месечно, а откажувате кога сакате — само одговорете на нашиот мејл.</p>
+  <p class="lead">Првиот сет стигнува на вашата е-пошта наскоро. Фала што сте со нас! 💛</p>
+  <a class="btn secondary" href="/">Назад кон Свет на децата</a>
+</article></div></main>
+<script>
+var id=new URLSearchParams(location.search).get("session_id");
+if(id)fetch("/api/pretplata-session?session_id="+encodeURIComponent(id)).then(r=>r.json()).then(d=>{if(d.buyer)document.getElementById("t").textContent="Добредојде, "+d.buyer+"! 🎉";try{fbq("track","Subscribe",{value:490,currency:"MKD"},{eventID:"sub-"+id})}catch(e){}}).catch(()=>{});
+</script></body></html>

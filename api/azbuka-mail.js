@@ -4,6 +4,7 @@
 const { json, readBody, stripeRequest } = require("../lib/orders");
 const { sendViaSmtp, escapeHtml } = require("../lib/email");
 const PRODUCT = "mk-azbuka-brojki";
+const { offerHtml } = require("../lib/subscription");
 const SITE = "https://svetnadecata.com/azbuka";
 
 module.exports = async function handler(req, res) {
@@ -30,6 +31,7 @@ module.exports = async function handler(req, res) {
       "<p><a href=\"" + direct + "\" style=\"display:inline-block;background:#e63946;color:#fff;text-decoration:none;font-weight:bold;padding:14px 22px;border-radius:12px\">Преземи го PDF-от</a></p>",
       "<p>Линкот останува активен – зачувајте ја оваа порака. Ако копчето не работи, отворете ја страницата за преземање:<br><a href=\"" + page + "\">" + page + "</a></p>",
       "<p>Печатете на A4 колку пати сакате за вашето семејство. Прашања? Само одговорете на оваа порака.</p>",
+      offerHtml("azbuka", cd.email),
       "<p>Свет на децата</p></div>"
     ].join("");
     const from = process.env.ORDER_FROM || "Свет на децата <radost@svetnadecata.com>";

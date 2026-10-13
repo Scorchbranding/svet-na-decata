@@ -13,5 +13,11 @@
       "source": "/azbuka/:path*",
       "destination": "https://moja-prva-azbuka.vercel.app/azbuka/:path*"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/pretplata-sync",
+      "schedule": "0 7 * * *"
+    }
   ]
 }
