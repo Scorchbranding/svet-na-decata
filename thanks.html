@@ -31,6 +31,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="config.js"></script>
+<style>.xsell{display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}.xsell img{width:100%;height:auto;border-radius:14px;display:block}.xsell-body{display:flex;flex-direction:column;gap:6px}.xsell-body strong{font-family:var(--serif);font-size:1.45rem}.xsell-body span{color:var(--muted)}.xsell-cta{color:var(--clay)!important;font-weight:600}.xsell:hover .xsell-cta{text-decoration:underline}@media(max-width:640px){.xsell{grid-template-columns:1fr}}</style>
 </head>
 <body>
   <header class="site-header">
@@ -53,6 +54,15 @@
         <div class="steps" id="thanks-steps"></div>
         <a class="btn" id="pdf-download" href="#" hidden>Кликни за да го симнеш PDF-от</a>
         <a class="btn secondary" href="index.html">Назад кон страницата</a>
+        <div style="margin:22px 0 6px;text-align:left"><a class="xsell" href="/azbuka?utm_source=svetnadecata&utm_medium=crosssell&utm_campaign=svet_thanks">
+          <img src="/azbuka/img/hero.jpg" alt="Мојата прва азбука и бројки" loading="lazy" width="1200" height="800">
+          <span class="xsell-body">
+            <span class="section-kicker">Од нас, за помалите</span>
+            <strong>Мојата прва азбука и бројки</strong>
+            <span>60 работни листови: сите 31 букви, бројки до 20, лавиринти и боење. PDF 490 ден. или печатена 999 ден.</span>
+            <span class="xsell-cta">Погледни ја книгата →</span>
+          </span>
+        </a></div>
         <nav class="legal-links" aria-label="Правни информации">
           <a href="privatnost.html">Приватност</a>
           <a href="kolacinja.html">Колачиња</a>
