@@ -27,6 +27,7 @@ module.exports = async function handler(req, res) {
       "metadata[city]": order.city,
       "metadata[address]": order.address,
       "metadata[note]": order.note,
+      "metadata[landing]": order.landing ? JSON.stringify(Object.assign({}, order.landing, { url: undefined, referrer: undefined })).slice(0, 490) : "",
       cancel_url: origin + "/index.html?payment=cancel",
       success_url: origin + "/thanks.html?session_id={CHECKOUT_SESSION_ID}"
     };
