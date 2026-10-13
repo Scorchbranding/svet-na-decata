@@ -17,7 +17,8 @@ module.exports = async function handler(req, res) {
     const body = await readBody(req);
     const plan = PLANS[body && body.plan];
     if (!plan) return json(res, 400, { error: "Избери печатена или комплет." });
-    if (body.company) return json(res, 200, { error: "ignored" });
+    // Honeypot: "company" was autofilled by browsers (Organization) and blocked real buyers. Only the hidden hp_web field counts now.
+    if (body.hp_web) return json(res, 200, { error: "ignored" });
     const order = {
       plan: plan.id, planName: plan.name, label: plan.label, price: plan.price,
       name: clean(body.name, 80), phone: clean(body.phone, 30), email: clean(body.email, 120),
