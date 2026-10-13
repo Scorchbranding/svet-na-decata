@@ -1,4 +1,13 @@
 (function () {
+  try {
+    if (sessionStorage.getItem("svet_landing")) return;
+    var q = new URLSearchParams(location.search), l = { host: location.hostname, path: location.pathname || "/", url: location.href.slice(0, 400) };
+    ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid"].forEach(function (k) { var v = q.get(k); if (v) l[k] = v.slice(0, 200); });
+    if (document.referrer) l.referrer = document.referrer.slice(0, 300);
+    sessionStorage.setItem("svet_landing", JSON.stringify(l));
+  } catch (e) {}
+})();
+(function () {
   var PLANS = {
     pdf: {
       id: "pdf",
@@ -292,7 +301,15 @@
       address: data.address,
       note: data.note,
       code: field("code"),
-      origin: location.origin
+      origin: location.origin,
+      landing: (function () {
+        var l = {};
+        try { l = JSON.parse(sessionStorage.getItem("svet_landing") || "{}") || {}; } catch (e) {}
+        l.host = l.host || location.hostname;
+        l.path = l.path || location.pathname || "/";
+        l.orderPath = location.pathname || "/";
+        return l;
+      })()
     };
 
     var endpoint = pay === "stripe" ? "/api/checkout" : "/api/order";
