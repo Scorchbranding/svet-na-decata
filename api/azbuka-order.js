@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
       printer: "Ваша печатница",
       paymentLabel: "На врата",
       notice: (plan.id === "komplet" ? "PDF-от се испраќа на е-пошта. " : "") +
-        "Печатница: Ваша печатница. Плаќање на врата: " + plan.label + " + " + DELIVERY + " ден. достава (ја плаќате на курирот).",
+        "Плаќање на врата: " + plan.label + " + " + DELIVERY + " ден. достава (ја плаќате на курирот).",
       paid: false
     });
     const sent = await notifySeller(payload);
