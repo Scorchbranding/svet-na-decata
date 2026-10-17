@@ -1,0 +1,35 @@
+<!doctype html><html lang="mk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Ви благодариме! – Мојата прва азбука и бројки</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap&subset=cyrillic" rel="stylesheet"><link rel="stylesheet" href="/azbuka/styles.css"><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","940198738676816");fbq("track","PageView");</script><script>try{var q=new URLSearchParams(location.search);if(!localStorage.getItem("alk_landing_azbuka")||q.get("utm_source")||q.get("fbclid")){var L={host:location.hostname,path:location.pathname||"/",t:Date.now()};["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid"].forEach(function(k){var v=q.get(k);if(v)L[k]=v.slice(0,200)});localStorage.setItem("alk_landing_azbuka",JSON.stringify(L))}}catch(e){}</script>
+</head>
+<body style="padding-bottom:0"><div class="wrap"><div class="box center" id="box">
+<h1>Се проверува плаќањето…</h1><p class="muted">Ве молиме почекајте неколку секунди.</p></div><a href="/?utm_source=azbuka&amp;utm_medium=crosssell&amp;utm_campaign=azbuka_thanks" style="display:block;margin:18px auto;max-width:560px;background:#1e3b30;color:#f3eee6;border-radius:18px;padding:18px 20px;text-decoration:none"><b style="display:block;font-size:19px;color:#e4b15a">🥣 652 комбинации – оброци за деца</b><span style="display:block;margin-top:4px">Од Свет на децата: стотици идеи за појадок, ручек и вечера за малите.</span><span style="display:block;margin-top:8px;font-weight:800">Погледни ја книгата со рецепти →</span></a></div>
+<script>
+(function(){
+ var box=document.getElementById("box"), id=new URLSearchParams(location.search).get("session_id")||"", tries=0;
+ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function ok(d){
+  if(window.fbq)try{var k="px_"+id;if(!localStorage.getItem(k)){fbq("track","Purchase",{value:490,currency:"MKD",content_ids:["mk-azbuka-brojki"],content_type:"product"},{eventID:id});localStorage.setItem(k,"1")}}catch(e){}
+  box.innerHTML='<div style="font-size:54px">🎉</div><h1>Ви благодариме'+(d.firstName?', '+esc(d.firstName):'')+'!</h1>'+
+  '<p>Вашата книга <b>„Мојата прва азбука и бројки“</b> е подготвена. Кликнете на копчето за да го преземете PDF-от (60 страници, A4).</p>'+
+  '<a class="btn" style="margin:16px auto" href="'+d.download+'">📥 Преземи го PDF-от</a>'+
+  '<p class="muted" style="font-size:15px">Потврда за плаќањето е испратена на <b>'+esc(d.email||"вашата е-пошта")+'</b>. Зачувајте ја оваа страница (обележувач) – линкот работи и подоцна.</p>'+
+  '<div style="text-align:left;background:#fffaf0;border-radius:14px;padding:12px 16px;margin-top:14px"><b>Совети за почеток:</b><ul style="margin:6px 0 0;padding-left:20px">'+
+  '<li>На телефон: по преземањето отворете ја датотеката од „Преземања“ (Downloads) и испратете ја на печатач или во копирница.</li>'+
+  '<li>Печатете на A4, црно-бело е сосема доволно.</li><li>Почнете со стр. 3–4 (загревање), а потоа една буква дневно.</li>'+
+  '<li>На крајот, доделете ја дипломата (стр. 60) 🏆</li></ul></div>'+
+  '<div style="text-align:left;background:#fff7e6;border:2px dashed #ffb703;border-radius:16px;padding:16px 18px;margin-top:16px"><b style="font-size:18px">🎁 Бонус за вас: нови активности секој месец</b><p style="margin:6px 0 12px">Штом веќе сте наш купувач, секој месец можете да добивате нов сет работни листови на е-пошта – само <b>490 ден. месечно</b>. Автоматско плаќање, откажувате кога сакате.</p><a class="btn" style="background:#2a9d8f" href="https://svetnadecata.com/api/pretplata?src=azbuka&email='+encodeURIComponent(d.email||"")+'">Да, сакам секој месец 🙌</a></div>'+
+  '<p class="muted" style="font-size:14px;margin-top:14px">Проблем? Пишете ни на <a href="mailto:radost@svetnadecata.com">radost@svetnadecata.com</a>. Повторно преземање: <a href="/azbuka/pristap.html">страница за пристап</a>.</p>';
+ }
+ function fail(msg){box.innerHTML='<h1>Не ја најдовме уплатата</h1><p>'+esc(msg)+'</p><p class="muted">Ако сте платиле, почекајте една минута и освежете ја страницата, или одете на <a href="/azbuka/pristap.html">повторно преземање</a>. Можете и да ни пишете на <a href="mailto:radost@svetnadecata.com">radost@svetnadecata.com</a>.</p><a class="btn" style="margin:12px auto" href="/azbuka">Назад кон страницата</a>'}
+ function check(){
+  if(!id){fail("Линкот не содржи број на нарачка.");return}
+  fetch("/azbuka/api/session?session_id="+encodeURIComponent(id)+'&l='+encodeURIComponent(localStorage.getItem('alk_landing_azbuka')||'')).then(function(r){return r.json()}).then(function(d){
+   if(d.paid)return ok(d);
+   if(++tries<6&&!d.error)return setTimeout(check,2000);
+   fail(d.error||"Плаќањето сè уште не е потврдено.");
+  }).catch(function(){if(++tries<6)setTimeout(check,2000);else fail("Проблем со врската.")});
+ }
+ check();
+})();
+</script></body></html>
