@@ -1,0 +1,29 @@
+name: Azbuka uptime
+
+on:
+  schedule:
+    # Every 30 minutes
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check https://svetnadecata.com/azbuka
+        run: |
+          set -euo pipefail
+          URL="https://svetnadecata.com/azbuka"
+          CODE=$(curl -sS -o /tmp/azbuka.html -w "%{http_code}" -L --max-time 30 "$URL")
+          echo "HTTP $CODE"
+          if [ "$CODE" != "200" ]; then
+            echo "::error::/azbuka returned HTTP $CODE"
+            exit 1
+          fi
+          for needle in "data-buy" "data-cod" "940198738676816" "1.199" "Купи PDF"; do
+            if ! grep -Fq "$needle" /tmp/azbuka.html; then
+              echo "::error::/azbuka HTML missing expected content: $needle"
+              exit 1
+            fi
+          done
+          echo "OK: /azbuka is 200 with three-offer landing + Meta pixel"

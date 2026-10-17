@@ -18,6 +18,10 @@
     {
       "path": "/api/pretplata-sync",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/azbuka-health",
+      "schedule": "*/30 * * * *"
     }
   ]
 }
