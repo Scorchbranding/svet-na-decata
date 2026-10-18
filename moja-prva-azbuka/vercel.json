@@ -1,0 +1,72 @@
+{
+  "buildCommand": "echo static",
+  "outputDirectory": "public",
+  "cleanUrls": false,
+  "functions": {
+    "api/download.js": {
+      "includeFiles": "private/**",
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(blagodarime|pristap).html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/azbuka/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/azbuka/(blagodarime|pristap).html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/azbuka/",
+      "destination": "/azbuka",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/azbuka",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/azbuka/:path*",
+      "destination": "/:path*"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/sync",
+      "schedule": "15 6 * * *"
+    }
+  ]
+}

@@ -4,14 +4,17 @@
       "maxDuration": 60
     }
   },
+  "redirects": [
+    {
+      "source": "/azbuka/",
+      "destination": "/azbuka",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
-      "source": "/azbuka",
-      "destination": "https://moja-prva-azbuka.vercel.app/azbuka"
-    },
-    {
-      "source": "/azbuka/:path*",
-      "destination": "https://moja-prva-azbuka.vercel.app/azbuka/:path*"
+      "source": "/azbuka/api/:path*",
+      "destination": "https://moja-prva-azbuka.vercel.app/azbuka/api/:path*"
     }
   ],
   "crons": [

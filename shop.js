@@ -8,24 +8,25 @@
   } catch (e) {}
 })();
 (function () {
+  var DELIVERY = 170;
   var PLANS = {
     pdf: {
       id: "pdf",
-      name: "Само PDF",
+      name: "PDF",
       price: 599,
       label: "599 ден.",
       copy: "Се плаќа само со картичка. По уплатата добиваш потврда и линк за симнување на е-пошта. Линкот останува активен."
     },
     print: {
       id: "print",
-      name: "Печатена верзија",
+      name: "Печатена",
       price: 999,
       label: "999 ден.",
       copy: "Печатена верзија на квалитетна хартија. Достава 170 ден. Можеш да платиш со картичка или на врата."
     },
     komplet: {
       id: "komplet",
-      name: "Дигитална + печатена",
+      name: "PDF + Печатена",
       price: 1299,
       label: "1.299 ден.",
       copy: "PDF и печатена верзија на квалитетна хартија. Достава на печатената е 170 ден. Со картичка добиваш потврда и линк за симнување на е-пошта. На врата, линкот стигнува кога ќе ја подигнеш пратката."
@@ -34,12 +35,49 @@
 
   var selected = "pdf";
 
+  function fmt(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  function totalLabel(plan) {
+    if (!needsAddress(plan.id)) return plan.label;
+    return fmt(plan.price) + " + " + DELIVERY + " достава = " + fmt(plan.price + DELIVERY) + " ден.";
+  }
+
+  function cookieValue(name) {
+    try {
+      var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+      return m ? decodeURIComponent(m[1]) : "";
+    } catch (e) { return ""; }
+  }
+
+  function sendCapi(eventName, params, eventId) {
+    try {
+      fetch("/api/meta-event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          eventName: eventName,
+          eventId: eventId,
+          sourceUrl: location.href,
+          fbp: cookieValue("_fbp"),
+          fbc: cookieValue("_fbc"),
+          customData: params
+        }),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function track(eventName, params, eventId) {
     if (typeof fbq === "function") {
       if (eventId) fbq("track", eventName, params, { eventID: eventId });
       else fbq("track", eventName, params);
     }
     if (typeof window.firePixel === "function") window.firePixel(eventName, params, eventId);
+    if (eventId && (eventName === "InitiateCheckout" || eventName === "Purchase" || eventName === "AddToCart" || eventName === "ViewContent")) {
+      sendCapi(eventName, params, eventId);
+    }
   }
 
   function planParams(plan) {
@@ -73,11 +111,12 @@
     var delivery = document.getElementById("delivery-fields");
     var payMethods = document.getElementById("pay-methods");
     var ship = needsAddress(plan.id);
+    var total = totalLabel(plan);
     if (name) name.textContent = plan.name;
     if (copy) copy.textContent = plan.copy;
     if (planName) planName.textContent = plan.name;
-    if (price) price.textContent = plan.label;
-    if (barPrice) barPrice.textContent = plan.label;
+    if (price) price.textContent = total;
+    if (barPrice) barPrice.textContent = total;
     if (barName) barName.textContent = plan.name;
     if (extra) {
       extra.textContent = ship
@@ -114,6 +153,7 @@
     var foot = document.getElementById("form-foot");
     var submit = document.getElementById("submit-btn");
     var stripeRadio = document.querySelector('input[name="pay"][value="stripe"]');
+    var total = totalLabel(plan);
     if (selected === "pdf" && stripeRadio) stripeRadio.checked = true;
     if (door) {
       door.classList.toggle("hidden", selected === "pdf");
@@ -122,8 +162,8 @@
     }
     if (submit) {
       submit.textContent = pay === "stripe"
-        ? "Плати со картичка · " + plan.label
-        : "Нарачај на врата · " + plan.label;
+        ? "Плати со картичка · " + total
+        : "Нарачај на врата · " + total;
     }
     if (foot) {
       foot.textContent = selected === "pdf"
@@ -189,12 +229,12 @@
   }
 
   track("ViewContent", {
-    content_name: "652 комбинации — Само PDF",
+    content_name: "652 комбинации — PDF",
     content_type: "product",
     content_ids: ["pdf"],
     value: 599,
     currency: "MKD"
-  });
+  }, "vc-svet-" + Date.now());
 
   document.querySelectorAll('input[name="pay"]').forEach(function (input) {
     input.addEventListener("change", updatePayUI);
@@ -271,9 +311,16 @@
     button.disabled = true;
     button.textContent = pay === "stripe" ? "Се отвора плаќањето..." : "Се испраќа...";
 
+    var eventStamp = plan.id + "-" + Date.now();
+    var checkoutEventId = "ic-" + eventStamp;
+    track("InitiateCheckout", planParams(plan), checkoutEventId);
+
     function finishDoor(paid) {
-      var eventId = "door-" + plan.id + "-" + Date.now();
+      var eventId = (paid && paid.eventId) || ("door-" + plan.id + "-" + Date.now());
       sessionStorage.removeItem("purchaseSent");
+      var purchaseParams = planParams(plan);
+      if (paid && paid.price) purchaseParams.value = paid.price;
+      track("Purchase", purchaseParams, eventId);
       sessionStorage.setItem("order", JSON.stringify({
         id: plan.id,
         name: plan.name,
@@ -283,6 +330,7 @@
         pay: "door",
         eventId: eventId
       }));
+      sessionStorage.setItem("purchaseSent", eventId);
       window.location.href = "thanks.html";
     }
 
@@ -302,6 +350,7 @@
       note: data.note,
       code: field("code"),
       origin: location.origin,
+      eventId: pay === "door" ? ("door-" + eventStamp) : checkoutEventId,
       landing: (function () {
         var l = {};
         try { l = JSON.parse(sessionStorage.getItem("svet_landing") || "{}") || {}; } catch (e) {}
@@ -325,15 +374,13 @@
     }).then(function (body) {
       if (pay === "stripe") {
         if (!body.url) throw new Error("Не добивме линк за плаќање.");
-        var eventStamp = plan.id + "-" + Date.now();
         track("AddToCart", planParams(plan), "atc-" + eventStamp);
-        track("InitiateCheckout", planParams(plan), "ic-" + eventStamp);
         window.setTimeout(function () {
           window.location.href = body.url;
         }, 300);
         return;
       }
-      track("AddToCart", planParams(plan), "atc-door-" + plan.id + "-" + Date.now());
+      track("AddToCart", planParams(plan), "atc-door-" + eventStamp);
       window.setTimeout(function () {
         finishDoor(body);
       }, 300);
