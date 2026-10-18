@@ -1,0 +1,17 @@
+<!doctype html><html lang="mk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Повторно преземање – Мојата прва азбука и бројки</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap&subset=cyrillic" rel="stylesheet"><link rel="stylesheet" href="/azbuka/styles.css"><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","940198738676816");fbq("track","PageView");</script><script>try{var q=new URLSearchParams(location.search);if(!localStorage.getItem("alk_landing_azbuka")||q.get("utm_source")||q.get("fbclid")){var L={host:location.hostname,path:location.pathname||"/",t:Date.now()};["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid"].forEach(function(k){var v=q.get(k);if(v)L[k]=v.slice(0,200)});localStorage.setItem("alk_landing_azbuka",JSON.stringify(L))}}catch(e){}</script>
+</head>
+<body style="padding-bottom:0"><div class="wrap"><div class="box">
+<h1>Повторно преземање</h1>
+<p class="muted">Веќе сте купиле? Внесете ја е-поштата што ја користевте при плаќањето и последните 4 цифри од картичката.</p>
+<form id="f"><label>Е-пошта<input type="email" name="email" required autocomplete="email" placeholder="ime@primer.mk"></label>
+<label>Последни 4 цифри од картичката<input name="last4" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="1234"></label>
+<button class="btn" type="submit">Најди ја мојата нарачка</button><div class="err" id="e"></div></form>
+<p class="muted" style="font-size:14px;margin-top:16px">Не успевате? Пишете ни на <a href="mailto:radost@svetnadecata.com">radost@svetnadecata.com</a>. <a href="/azbuka">Назад</a></p>
+</div></div>
+<script>
+document.getElementById("f").addEventListener("submit",function(ev){ev.preventDefault();var f=ev.target,e=document.getElementById("e");e.textContent="";
+fetch("/azbuka/api/access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:f.email.value,last4:f.last4.value})})
+.then(function(r){return r.json()}).then(function(d){if(d.url)location.href=d.url;else e.textContent=d.error||"Не најдовме нарачка."}).catch(function(){e.textContent="Проблем со врската."})});
+</script></body></html>

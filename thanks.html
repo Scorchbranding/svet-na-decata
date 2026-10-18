@@ -62,7 +62,7 @@
         <div style="margin:22px 0 6px;text-align:left"><a class="xsell" href="/azbuka?utm_source=svetnadecata&utm_medium=crosssell&utm_campaign=svet_thanks">
           <img src="/azbuka/img/hero.jpg" alt="Мојата прва азбука и бројки" loading="lazy" width="1200" height="800">
           <span class="xsell-body">
-            <span class="section-kicker">Од нас, за помалите</span>
+            <span class="section-kicker">Често купувано заедно</span>
             <strong>Мојата прва азбука и бројки</strong>
             <span>60 работни листови: сите 31 букви, бројки до 20, лавиринти и боење. PDF 490 ден. или печатена 999 ден.</span>
             <span class="xsell-cta">Погледни ја книгата →</span>
@@ -112,6 +112,14 @@
             + "&cd[content_type]=product"
             + "&cd[content_ids]=" + encodeURIComponent(planId)
             + "&cd[content_name]=" + encodeURIComponent(purchase.content_name);
+          try {
+            fetch("/api/meta-event", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ eventName: "Purchase", eventId: eventId, sourceUrl: location.href, customData: purchase }),
+              keepalive: true
+            });
+          } catch (e) {}
           sessionStorage.setItem("purchaseSent", eventId);
         }
         var who = order.buyer ? ", " + order.buyer : "";

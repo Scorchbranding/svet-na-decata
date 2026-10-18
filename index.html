@@ -44,9 +44,9 @@
     "description": "Готови комбинации за бебешки оброци од 6. месец: овошје, зеленчук, месо, риба и јајце.",
     "brand": { "@type": "Brand", "name": "Свет на децата" },
     "offers": [
-      { "@type": "Offer", "name": "Само PDF", "price": "599", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" },
-      { "@type": "Offer", "name": "Печатена верзија", "price": "999", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" },
-      { "@type": "Offer", "name": "Дигитална + печатена", "price": "1299", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" }
+      { "@type": "Offer", "name": "PDF", "price": "599", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" },
+      { "@type": "Offer", "name": "Печатена", "price": "999", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" },
+      { "@type": "Offer", "name": "PDF + Печатена", "price": "1299", "priceCurrency": "MKD", "availability": "https://schema.org/InStock" }
     ]
   }
   </script>
@@ -200,7 +200,7 @@
         <div class="plans">
           <button class="plan featured" type="button" data-plan="pdf" aria-pressed="true">
             <div class="badge">Најчесто избран</div>
-            <div class="name">Само дигитална</div>
+            <div class="name">PDF</div>
             <div class="sum">599<small>ден.</small></div>
             <p>Се плаќа само со картичка. По уплатата добиваш линк за симнување.</p>
             <ul>
@@ -211,7 +211,7 @@
             <div class="choose">Плати со картичка</div>
           </button>
           <button class="plan" type="button" data-plan="print">
-            <div class="name">Само печатена</div>
+            <div class="name">Печатена</div>
             <div class="sum">999<small>ден.</small></div>
             <p>Печатена верзија на квалитетна хартија, за кујната. Достава 170 ден.</p>
             <ul>
@@ -222,7 +222,7 @@
             <div class="choose">Ја сакам печатена</div>
           </button>
           <button class="plan" type="button" data-plan="komplet">
-            <div class="name">Дигитална + печатена</div>
+            <div class="name">PDF + Печатена</div>
             <div class="sum">1.299<small>ден.</small></div>
             <p class="was">Одделно 1.598 ден.</p>
             <p class="save">Заштедуваш 299 ден.</p>
@@ -241,9 +241,9 @@
       <div class="wrap checkout">
         <aside class="summary">
           <p class="section-kicker">Нарачка</p>
-          <h3 id="summary-name">Само PDF</h3>
+          <h3 id="summary-name">PDF</h3>
           <p class="fine" id="summary-copy">Се плаќа само со картичка. По уплатата добиваш потврда и линк за симнување на е-пошта. Линкот останува активен.</p>
-          <div class="summary-line"><span>Пакет</span><strong id="summary-plan">Само PDF</strong></div>
+          <div class="summary-line"><span>Пакет</span><strong id="summary-plan">PDF</strong></div>
           <div class="total"><span>Вкупно</span><span id="summary-price">599 ден.</span></div>
           <p class="fine" id="summary-extra">Само картичка. Нема адреса и нема достава — линкот за PDF стигнува на е-пошта.</p>
         </aside>
@@ -293,6 +293,7 @@
           <input class="hp" tabindex="-1" autocomplete="off" name="hp_leave_blank" aria-hidden="true">
           <p id="form-error" class="error hidden" role="alert"></p>
           <button class="btn full" id="submit-btn" type="submit">Плати со картичка · 599 ден.</button>
+          <p class="trust-line">Достава 2–4 работни дена · Плаќање при достава или со картичка · Контакт: <a href="mailto:radost@svetnadecata.com">radost@svetnadecata.com</a></p>
           <p class="fine" id="form-foot">По уплатата со картичка добиваш линк за симнување на е-пошта. Не е замена за совет од педијатар.</p>
         </form>
       </div>
@@ -336,7 +337,7 @@
         <a class="xsell" href="/azbuka?utm_source=svetnadecata&utm_medium=crosssell&utm_campaign=svet_landing">
           <img src="/azbuka/img/hero.jpg" alt="Мојата прва азбука и бројки" loading="lazy" width="1200" height="800">
           <span class="xsell-body">
-            <span class="section-kicker">Од нас, за помалите</span>
+            <span class="section-kicker">Често купувано заедно</span>
             <strong>Мојата прва азбука и бројки</strong>
             <span>60 работни листови: сите 31 букви, бројки до 20, лавиринти и боење. PDF 490 ден. или печатена 999 ден.</span>
             <span class="xsell-cta">Погледни ја книгата →</span>
@@ -376,7 +377,7 @@
   <div class="mobile-bar">
     <div>
       <b id="bar-price">599 ден.</b>
-      <span id="bar-name">Само PDF</span>
+      <span id="bar-name">PDF</span>
     </div>
     <a class="btn" href="#naracka" data-plan="pdf" id="bar-btn">Плати PDF</a>
   </div>

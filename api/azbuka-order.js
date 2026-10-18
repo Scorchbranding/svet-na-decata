@@ -5,9 +5,10 @@ const { pushAlekstonOrder } = require("../lib/alekston");
 const { sendOrderConfirmation } = require("../lib/email");
 
 const DELIVERY = 170; // paid by the buyer to the courier; not revenue, not cost
+const { sendMetaEvent, clientIp, userAgent } = require("../lib/meta");
 const PLANS = {
   print: { id: "print", name: "Печатена", price: 999, label: "999 ден.", productId: "cmv747dh900037zord7rz1q52" },
-  komplet: { id: "komplet", name: "Печатена + PDF", price: 1199, label: "1.199 ден.", productId: "cmv747dly00057zorshkhcc1e" }
+  komplet: { id: "komplet", name: "PDF + Печатена", price: 1199, label: "1.199 ден.", productId: "cmv747dly00057zorshkhcc1e" }
 };
 const clean = (v, max) => String(v || "").replace(/\s+/g, " ").trim().slice(0, max);
 
@@ -42,12 +43,30 @@ module.exports = async function handler(req, res) {
         "Плаќање на врата: " + plan.label + " + " + DELIVERY + " ден. достава (ја плаќате на курирот).",
       paid: false
     });
+    const eventId = clean(body.eventId, 100) || ("azbuka-cod-" + plan.id + "-" + Date.now());
+    payload.eventId = eventId;
     const sent = await notifySeller(payload);
     await sendOrderConfirmation(payload);
     const alekston = await pushAlekstonOrder(payload);
+    await sendMetaEvent({
+      eventName: "Purchase",
+      eventId: eventId,
+      sourceUrl: "https://svetnadecata.com/azbuka",
+      email: order.email,
+      phone: order.phone,
+      clientIp: clientIp(req),
+      userAgent: userAgent(req),
+      customData: {
+        content_name: "Мојата прва азбука — " + plan.name,
+        content_ids: ["mk-azbuka-" + plan.id],
+        content_type: "product",
+        value: plan.price,
+        currency: "MKD"
+      }
+    }).catch(function () {});
     if (!alekston.ok && !alekston.skipped) return json(res, 502, { error: alekston.error || "Нарачката не се запиша." });
     if (!sent && !alekston.ok) return json(res, 503, { error: "Нарачките на врата моментално не се примаат." });
-    return json(res, 200, { ok: true, price: plan.price, label: plan.label });
+    return json(res, 200, { ok: true, price: plan.price, label: plan.label, eventId: eventId });
   } catch (error) {
     return json(res, 502, { error: "Нарачката не помина. Пробај повторно." });
   }
