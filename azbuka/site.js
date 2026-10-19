@@ -1,5 +1,4 @@
 (function () {
-  var PAYMENT_LINK = document.documentElement.getAttribute("data-payment-link") || "";
   var DELIVERY = 170;
   var PRICES = { print: 999, komplet: 1199 };
 
@@ -88,11 +87,16 @@
     var label = btn.innerHTML; btn.disabled = true; btn.innerHTML = "Се отвора безбедно плаќање…";
     var eventId = "ic-azbuka-pdf-" + Date.now();
     track("InitiateCheckout", productParams(490, ["mk-azbuka-pdf"]), eventId);
-    fetch("/azbuka/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ landing: buyLanding(), eventId: eventId }) })
+    // Local checkout tags metadata.site/product/plan so webhook + Alekston never treat this as 652.
+    // No Payment Link fallback — that link had no metadata and never reached Alekston.
+    fetch("/api/azbuka-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ landing: buyLanding(), eventId: eventId, origin: location.origin })
+    })
       .then(function (r) { return r.json(); })
       .then(function (d) { if (d && d.url) { location.href = d.url; return; } throw new Error((d && d.error) || "Грешка"); })
       .catch(function (e) {
-        if (PAYMENT_LINK) { location.href = PAYMENT_LINK; return; }
         btn.disabled = false; btn.innerHTML = label; if (errEl) errEl.textContent = e.message + " Обидете се повторно.";
       });
   }

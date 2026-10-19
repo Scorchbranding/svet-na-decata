@@ -6,7 +6,7 @@ Source of truth for the **three-offer** landing that must be served at `/azbuka`
 
 | Offer | Price | Checkout |
 | --- | --- | --- |
-| PDF | 490 MKD | Stripe via `POST /azbuka/api/checkout` |
+| PDF | 490 MKD | Stripe via `POST /api/azbuka-checkout` on svet-na-decata (metadata: `site=svetnadecata`, `product=mk-azbuka-brojki`, `plan=azbuka-pdf`) |
 | Printed | 999 MKD | Cash on delivery via `https://svetnadecata.com/api/azbuka-order` |
 | Bundle (printed + PDF) | 1.199 MKD | Same COD endpoint |
 

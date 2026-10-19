@@ -1,4 +1,4 @@
-const { json, readBody, parseOrder, notifySeller } = require("../lib/orders");
+const { json, readBody, parseOrder, notifySeller, ALEKSTON_VARIANTS } = require("../lib/orders");
 const { pushAlekstonOrder } = require("../lib/alekston");
 const { sendOrderConfirmation } = require("../lib/email");
 const { sendMetaEvent, clientIp, userAgent } = require("../lib/meta");
@@ -18,7 +18,10 @@ module.exports = async function handler(req, res) {
       : "Плаќање на врата, при подигнување на пратката.";
 
     const eventId = String((body && body.eventId) || ("door-" + parsed.plan.id + "-" + Date.now())).slice(0, 100);
+    const variant = ALEKSTON_VARIANTS[parsed.plan.id] || parsed.order.planName;
     const payload = Object.assign({}, parsed.order, {
+      alekstonProductLabel: variant,
+      alekstonProductName: "652 комбинации — " + parsed.order.planName,
       paymentLabel: "На врата",
       notice: notice,
       paid: false,

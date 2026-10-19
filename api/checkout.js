@@ -31,6 +31,10 @@ module.exports = async function handler(req, res) {
       cancel_url: origin + "/index.html?payment=cancel",
       success_url: origin + "/thanks.html?session_id={CHECKOUT_SESSION_ID}"
     };
+    if (order.discountPercent) {
+      params["metadata[discount_percent]"] = String(order.discountPercent);
+      params["metadata[full_price]"] = "599";
+    }
     if (plan.physical) {
       params["payment_intent_data[shipping][name]"] = order.name;
       params["payment_intent_data[shipping][address][line1]"] = order.address;
