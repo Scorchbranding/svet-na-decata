@@ -44,7 +44,21 @@ module.exports = async function handler(req, res) {
 
     const session = await stripeRequest("checkout/sessions", params);
     if (!session.url) return json(res, 502, { error: "Stripe не врати страница за плаќање." });
-    return json(res, 200, { url: session.url });
+    console.log("652-checkout", session.id, JSON.stringify({
+      plan: params["metadata[plan]"],
+      discount_percent: params["metadata[discount_percent]"] || null,
+      full_price: params["metadata[full_price]"] || null
+    }));
+    return json(res, 200, {
+      url: session.url,
+      id: session.id,
+      metadata: {
+        site: SITE_TAG,
+        plan: plan.id,
+        discount_percent: order.discountPercent || null,
+        full_price: order.discountPercent ? "599" : null
+      }
+    });
   } catch (error) {
     const message = error.publicMessage || "Плаќањето не помина. Пробај повторно.";
     return json(res, error.publicMessage === "Плаќањето со картичка сè уште не е вклучено." ? 503 : 502, { error: message });

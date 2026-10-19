@@ -70,7 +70,8 @@ module.exports = async function handler(req, res) {
 
     const session = await stripeRequest("checkout/sessions", params);
     if (!session.url) return json(res, 502, { error: "Stripe не врати страница за плаќање." });
-    return json(res, 200, { url: session.url });
+    console.log("azbuka-checkout", session.id, JSON.stringify(session.metadata || {}));
+    return json(res, 200, { url: session.url, id: session.id, metadata: session.metadata || {} });
   } catch (error) {
     const message = error.publicMessage || "Не успеавме да го отвориме плаќањето. Обидете се повторно.";
     return json(res, error.publicMessage === "Плаќањето со картичка сè уште не е вклучено." ? 503 : 502, { error: message });
