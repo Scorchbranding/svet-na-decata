@@ -31,7 +31,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="config.js"></script>
-<style>.xsell{display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}.xsell img{width:100%;height:auto;border-radius:14px;display:block}.xsell-body{display:flex;flex-direction:column;gap:6px}.xsell-body strong{font-family:var(--serif);font-size:1.45rem}.xsell-body span{color:var(--muted)}.xsell-cta{color:var(--clay)!important;font-weight:600}.xsell:hover .xsell-cta{text-decoration:underline}@media(max-width:640px){.xsell{grid-template-columns:1fr}}</style>
+<style>.xsell{display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:22px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}.xsell img{width:100%;height:auto;border-radius:14px;display:block}.xsell-body{display:flex;flex-direction:column;gap:6px}.xsell-body strong{font-family:var(--serif);font-size:1.45rem}.xsell-body span{color:var(--muted)}.xsell-cta{color:var(--clay)!important;font-weight:600}.xsell:hover .xsell-cta{text-decoration:underline}@media(max-width:640px){.xsell{grid-template-columns:1fr}}#pdf-download[hidden]{display:none !important}</style>
 </head>
 <body>
   <header class="site-header">
@@ -130,7 +130,15 @@
           : "Провери ја е-поштата. Таму е потврдата за нарачката.";
 
         var lines = [];
-        if (order.pay === "door" && order.id === "komplet") {
+        var back = document.querySelector("a.btn.secondary");
+        if (back && typeof order.back === "string" && order.back.charAt(0) === "/" && order.back.indexOf("//") !== 0) {
+          back.href = order.back;
+        }
+        if (order.pay === "door" && order.id === "bf") {
+          lines.push("Плаќаш 999 ден. при подигнување на пратката. Доставата е +170 ден. Вкупно 1.169 ден.");
+          lines.push("Провери ја е-поштата за потврда.");
+          lines.push("Линкот за PDF стигнува кога ќе ја подигнеш пратката, не веднаш.");
+        } else if (order.pay === "door" && order.id === "komplet") {
           lines.push("Плаќаш при подигнување на пратката. Доставата е 170 ден.");
           lines.push("Провери ја е-поштата за потврда.");
           lines.push("Линкот за PDF стигнува кога ќе ја подигнеш пратката.");
