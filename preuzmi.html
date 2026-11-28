@@ -42,7 +42,24 @@
       var lead = document.getElementById("page-lead");
       var steps = document.getElementById("page-steps");
       var download = document.getElementById("pdf-download");
-      var sessionId = new URLSearchParams(location.search).get("session_id") || "";
+      var params = new URLSearchParams(location.search);
+      var sessionId = params.get("session_id") || "";
+      var orderId = params.get("order") || "";
+      var orderToken = params.get("t") || "";
+      if (orderId && orderToken) {
+        if (!/^[A-Za-z0-9_-]{8,80}$/.test(orderId) || !/^[a-f0-9]{64}$/.test(orderToken)) {
+          title.textContent = "Линкот не е целосен.";
+          lead.textContent = "Отвори ја пораката од е-поштата и притисни го линкот за симнување.";
+          return;
+        }
+        title.textContent = "Потврда за нарачката";
+        lead.textContent = "Пратката е испорачана. Кликни за да го симнеш PDF-от.";
+        steps.innerHTML = "<div><strong>1</strong><span>Кликни за да го симнеш PDF-от.</span></div>"
+          + "<div><strong>2</strong><span>Линкот останува активен. Можеш да го отвориш повторно од е-поштата.</span></div>";
+        download.hidden = false;
+        download.href = "/api/download?order=" + encodeURIComponent(orderId) + "&t=" + encodeURIComponent(orderToken);
+        return;
+      }
       if (!sessionId) {
         title.textContent = "Линкот не е целосен.";
         lead.textContent = "Отвори ја пораката од е-поштата и притисни го линкот за симнување.";

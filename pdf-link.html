@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Приватен PDF линк | Свет на децата</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">652</span>
+        Свет на децата
+      </a>
+    </div>
+  </header>
+  <main class="thanks">
+    <div class="wrap">
+      <article class="thanks-card">
+        <p class="section-kicker">Само за нас</p>
+        <h1>Приватен линк за PDF</h1>
+        <p class="lead">Линкот го отвора 652 комбинации без нарачка. Истекува по избраните денови. Лозинката не се зачувува.</p>
+        <form id="link-form">
+          <label>Лозинка
+            <input id="password" type="password" name="password" autocomplete="current-password" required>
+          </label>
+          <label>Ознака
+            <input id="label" name="label" maxlength="80" required placeholder="На пр. тетка Ана">
+          </label>
+          <label>Денови
+            <input id="days" name="days" type="number" min="1" max="3650" value="14" required>
+          </label>
+          <p class="error hidden" id="form-error" role="alert"></p>
+          <button class="btn" type="submit">Направи линк</button>
+        </form>
+        <div id="result" hidden>
+          <p class="fine" id="result-meta"></p>
+          <label>Линк
+            <input id="result-url" readonly>
+          </label>
+          <p>
+            <button class="btn" type="button" id="copy">Копирај</button>
+          </p>
+          <p class="fine">Ид за повлекување (стави го во PDF_SHARE_REVOKED): <code id="result-id"></code></p>
+        </div>
+      </article>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var form = document.getElementById("link-form");
+      var error = document.getElementById("form-error");
+      var result = document.getElementById("result");
+      var urlInput = document.getElementById("result-url");
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        error.classList.add("hidden");
+        result.hidden = true;
+        var days = Number(document.getElementById("days").value);
+        var password = document.getElementById("password").value;
+        var label = document.getElementById("label").value.trim();
+        if (!label || !Number.isInteger(days) || days < 1) {
+          error.textContent = "Напиши ознака и број на денови.";
+          error.classList.remove("hidden");
+          return;
+        }
+        fetch("/api/pdf-link", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + password
+          },
+          body: JSON.stringify({ label: label, days: days })
+        }).then(function (response) {
+          return response.json().then(function (data) { return { ok: response.ok, data: data }; });
+        }).then(function (res) {
+          if (!res.ok) {
+            error.textContent = (res.data && res.data.error) || "Линкот не се направи.";
+            error.classList.remove("hidden");
+            return;
+          }
+          var local = location.origin + res.data.path;
+          var shown = location.hostname === "svetnadecata.com" || location.hostname === "www.svetnadecata.com"
+            ? res.data.url
+            : local;
+          urlInput.value = shown;
+          document.getElementById("result-id").textContent = res.data.id;
+          var when = new Date(res.data.exp * 1000);
+          document.getElementById("result-meta").textContent = "Важи до " + when.toLocaleString("mk") + ".";
+          result.hidden = false;
+          urlInput.focus();
+          urlInput.select();
+        }).catch(function () {
+          error.textContent = "Не можеме да го направиме линкот. Пробај повторно.";
+          error.classList.remove("hidden");
+        });
+      });
+      document.getElementById("copy").addEventListener("click", function () {
+        var value = urlInput.value;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).catch(function () { urlInput.select(); });
+        } else {
+          urlInput.select();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
