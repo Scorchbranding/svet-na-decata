@@ -5,6 +5,9 @@
     },
     "api/stripe-reconcile.js": {
       "maxDuration": 60
+    },
+    "api/cod-pdf-sync.js": {
+      "maxDuration": 60
     }
   },
   "redirects": [
@@ -18,6 +21,10 @@
     {
       "source": "/azbuka/api/:path*",
       "destination": "https://moja-prva-azbuka.vercel.app/azbuka/api/:path*"
+    },
+    {
+      "source": "/pdf/:token",
+      "destination": "/api/download?share=:token"
     }
   ],
   "crons": [
@@ -28,6 +35,10 @@
     {
       "path": "/api/stripe-reconcile",
       "schedule": "30 7 * * *"
+    },
+    {
+      "path": "/api/cod-pdf-sync",
+      "schedule": "45 8 * * *"
     }
   ]
 }

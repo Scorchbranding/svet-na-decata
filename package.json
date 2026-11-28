@@ -1,0 +1,13 @@
+{
+  "name": "svet-na-decata",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.js"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.9.0"
+  }
+}
